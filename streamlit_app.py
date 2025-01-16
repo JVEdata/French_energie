@@ -44,7 +44,7 @@ if choix == "👋 Introduction":
     """)
     st.image(
         "https://upload.wikimedia.org/wikipedia/commons/thumb/3/33/France_energy_mix.png/800px-France_energy_mix.png",
-        caption="Mix énergétique en France - Source: Wikipedia"
+        caption=""
     )
     if st.button("🚀 Commencer l'exploration"):
         st.write("Vous êtes prêt à découvrir les données énergétiques ! 🌍")
