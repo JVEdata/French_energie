@@ -13,12 +13,14 @@ import os
 
 # Google Drive file IDs
 GOOGLE_DRIVE_CSV_FILE_ID = '1hvEXS7ABSGUh45QHvoR1aCKzJzsQ0S4B'
+GOOGLE_DRIVE_SOUTIRAGE_FILE_ID = '1vIsX-TemlEYBTH9dNA4vaEY_6lcYiX6j' # Soutirage Dataset
 GOOGLE_DRIVE_IMG_FILE_ID = '1oVLP_z33SwbFF3rSoqFz0FmqYFbyhN-9'  # Image ID
+GOOGLE_DRIVE_POPULATION_FILE_ID = '1XPmqG7k79mcDX2U93FPryrs9iUXVQwK0' # Population Dataset
 
 SECTION_ICONS = {
     "👋 Introduction": "👋 Introduction",
-    "🔎 Exploration des données": "🔎 Exploration",
-    "📊 Data Visualisation": "📊 Visualisation",
+    "🔎 Exploration des données": "🔎 Exploration des données",
+    "📊 Data Visualisation": "📊 Data Visualisation",
     "⚙️ Modélisation": "⚙️ Modélisation",
     "📌 Conclusion": "📌 Conclusion"
 }
@@ -72,12 +74,12 @@ def load_data(file_id):
             eco2mix_df = pd.read_csv(actual_output_path, sep=';', encoding='latin-1')
 
         eco2mix_df = eco2mix_df.replace('ND', np.nan)
-        data = {"📁 Dataset Eco2mix (Fichier de base du projet)": eco2mix_df}
-        return data
+        
+        return eco2mix_df
 
     except Exception as e:
         st.error(f"Error loading or processing CSV data: {e}")
-        return {}
+        return None
 
     finally:
         if 'actual_output_path' in locals() and os.path.exists(actual_output_path):
@@ -85,6 +87,68 @@ def load_data(file_id):
                 os.remove(actual_output_path)
             except OSError as e:
                 st.warning(f"Could not remove temporary file {actual_output_path}: {e}")
+
+@st.cache_data
+def load_soutirage_data(file_id):
+    """Loads the Soutirage data from Google Drive."""
+    output_path = f"temp_soutirage_{file_id}.csv"
+    try:
+        url = f'https://drive.google.com/uc?id={file_id}'
+        actual_output_path = gdown.download(url, output_path, quiet=True, fuzzy=True)
+
+        if not actual_output_path or not os.path.exists(actual_output_path):
+            st.error(f"Failed to download Soutirage CSV file (ID: {file_id}). Check ID and sharing permissions.")
+            return None
+
+        try:
+            soutirage_df = pd.read_csv(actual_output_path, sep=';', encoding='utf-8')
+        except UnicodeDecodeError:
+            st.warning("UTF-8 decoding failed, trying latin-1 for Soutirage CSV.")
+            soutirage_df = pd.read_csv(actual_output_path, sep=';', encoding='latin-1')
+
+        return soutirage_df
+
+    except Exception as e:
+        st.error(f"Error loading or processing Soutirage CSV data: {e}")
+        return None
+
+    finally:
+        if 'actual_output_path' in locals() and os.path.exists(actual_output_path):
+            try:
+                os.remove(actual_output_path)
+            except OSError as e:
+                st.warning(f"Could not remove temporary Soutirage file {actual_output_path}: {e}")
+
+@st.cache_data
+def load_population_data(file_id):
+    """Loads population data from Google Drive."""
+    output_path = f"temp_population_{file_id}.csv"
+    try:
+        url = f'https://drive.google.com/uc?id={file_id}'
+        actual_output_path = gdown.download(url, output_path, quiet=True, fuzzy=True)
+
+        if not actual_output_path or not os.path.exists(actual_output_path):
+            st.error(f"Failed to download Population CSV file (ID: {file_id}). Check ID and sharing permissions.")
+            return None
+
+        try:
+            population_df = pd.read_csv(actual_output_path, encoding='latin-1') # force latin-1 encoding
+        except Exception as e:
+            st.error(f"Error loading or processing Population CSV data: {e}")
+            return None
+
+        return population_df
+
+    except Exception as e:
+        st.error(f"Error loading or processing Population CSV data: {e}")
+        return None
+
+    finally:
+        if 'actual_output_path' in locals() and os.path.exists(actual_output_path):
+            try:
+                os.remove(actual_output_path)
+            except OSError as e:
+                st.warning(f"Could not remove temporary Population file {actual_output_path}: {e}")
 
 @st.cache_data
 def load_and_process_image(image_file_id):
@@ -148,7 +212,21 @@ def load_and_process_image(image_file_id):
 # --- 5. MAIN APP LOGIC ---
 # =============================================================================
 
-datasets = load_data(GOOGLE_DRIVE_CSV_FILE_ID)
+eco2mix_df = load_data(GOOGLE_DRIVE_CSV_FILE_ID)
+soutirage_df = load_soutirage_data(GOOGLE_DRIVE_SOUTIRAGE_FILE_ID)
+population_df = load_population_data(GOOGLE_DRIVE_POPULATION_FILE_ID)
+
+datasets = {}
+
+if eco2mix_df is not None:
+    datasets["📁 Dataset Eco2mix (Fichier de base du projet)"] = eco2mix_df
+
+if soutirage_df is not None:
+    datasets["⚡ Soutirages régionaux quotidiens consolidés"] = soutirage_df
+
+if population_df is not None:
+    datasets["👪 Population - Insee"] = population_df
+
 # Handle case where session state might not have 'choix' initially
 if 'choix' not in st.session_state:
     st.session_state.choix = list(SECTION_ICONS.keys())[0] # Default to first item
@@ -221,7 +299,7 @@ elif current_choice == "🔎 Exploration des données":
     st.subheader("Sélectionnez un dataset à explorer")
 
     if not datasets:
-        st.error("Le chargement du dataset principal a échoué. Impossible de continuer l'exploration.")
+        st.error("Le chargement d'au moins un dataset a échoué. Impossible de continuer l'exploration.")
     else:
         dataset_names = list(datasets.keys())
         selected_dataset_name = st.selectbox(
@@ -363,6 +441,80 @@ elif current_choice == "🔎 Exploration des données":
 
                             except Exception as e: # Catch broader exceptions during date processing
                                 st.error(f"Erreur lors du traitement de la colonne 'Date' ou du filtrage : {e}")
+            elif selected_dataset_name == "⚡ Soutirages régionaux quotidiens consolidés":
+                st.markdown("<hr style='border: 1px solid #444;'>", unsafe_allow_html=True)
+                st.markdown("""<h3 style='text-align: left;'> 📝 Aperçu de Dataset Soutirages régionaux quotidiens consolidés """, unsafe_allow_html=True)
+                st.write("""Ce dataset fournit les soutirages quotidiens consolidés au niveau régional, représentant l'électricité prélevée sur le réseau pour répondre aux besoins des consommateurs finaux. Les colonnes horaires (par exemple : "00h00", "01h30") indiquent les volumes soutirés en MW pour chaque demi-heure.""")
+                st.write("Voici un aperçu des 5 premières lignes de la DataFrame :")
+                st.dataframe(df.head())
+
+                # --- Analysis of Missing Values Section ---
+                st.markdown("<hr style='border: 1px solid #444;'>", unsafe_allow_html=True)
+                st.markdown("<h3 style='text-align: left;'>❓ Analyse des valeurs manquantes</h3>", unsafe_allow_html=True)
+                st.write("Certaines colonnes horaires (de \"00h30\" à \"23h30\") présentaient des valeurs manquantes, mais celles-ci ont été supprimées lors du prétraitement des données. Actuellement, des colonnes horaires présentent encore de faibles taux de valeurs manquantes, représentant moins de 0,003 % des enregistrements. Ces valeurs ont été corrigées par leurs suppressions.")
+                st.write("Nombre de valeurs manquantes par colonne:")
+
+                # Calculate missing values per column
+                missing_values = df.isnull().sum()
+                missing_values_df = pd.DataFrame({'Column': missing_values.index, 'Missing Count': missing_values.values})
+                missing_values_df = missing_values_df[missing_values_df['Missing Count'] > 0]
+
+                # Display the table using st.dataframe
+                st.dataframe(missing_values_df)
+
+            elif selected_dataset_name == "👪 Population - Insee":
+                st.markdown("<hr style='border: 1px solid #444;'>", unsafe_allow_html=True)
+                st.markdown("""<h3 style='text-align: left;'> 📝 Aperçu de Population - Insee """, unsafe_allow_html=True)
+                st.write("""Voici un aperçu des données provenant de l'Insee. Ces données fournissent des informations sur la population totale des différentes régions françaises, collectées sur plusieurs années. Cela permet d'explorer l'impact démographique sur la consommation énergétique.""")
+                st.write("Voici un aperçu des 5 premières lignes de la DataFrame :")
+                st.dataframe(df.head())
+
+                # --- Analysis of Missing Values Section ---
+                st.markdown("<hr style='border: 1px solid #444;'>", unsafe_allow_html=True)
+                st.markdown("<h3 style='text-align: left;'>❓ Analyse des valeurs manquantes</h3>", unsafe_allow_html=True)
+
+                missing_values = df.isnull().sum()
+                if missing_values.sum() == 0:
+                    st.write("Le jeu de données est complet, sans valeurs manquantes. Cela garantit une qualité élevée et permet de l'utiliser directement pour des analyses sans prétraitement supplémentaire.")
+                   
+                
+                # Prepare the data for the table
+                missing_data = {'Column': missing_values.index, 'Missing Count': missing_values.values}
+                missing_df = pd.DataFrame(missing_data)
+
+                # Format 'Missing Count' to display as an integer (no decimal points)
+                missing_df['Missing Count'] = missing_df['Missing Count'].astype(int)
+
+                st.dataframe(missing_df)
+
+                # --- Population by Region and Year Section ---
+                st.markdown("<hr style='border: 1px solid #444;'>", unsafe_allow_html=True)
+                st.markdown("<h3 style='text-align: left;'>🏘️ Nombre d'habitants par région et par année</h3>", unsafe_allow_html=True)
+
+                # Extract unique regions and years from the population dataset
+                available_regions = sorted(df['Régions'].unique()) # Assuming 'Régions' is the correct column name
+
+                #Get the year columns based on column index
+                year_columns = df.columns[1:].tolist()
+                available_years = sorted(year_columns)
+
+                # Create select boxes for region and year
+                selected_region_population = st.selectbox("Sélectionner une région :", available_regions)
+                selected_year_population = st.selectbox("Sélectionner une année :", available_years)
+
+                # Find the population for the selected region and year
+                try:
+                    selected_population = df[df['Régions'] == selected_region_population][selected_year_population].values[0] #
+                    year_only = selected_year_population.split('/')[2] #getting the year
+                    st.write(f"Nombre d'habitants en {year_only} en {selected_region_population} : {selected_population}")
+                except IndexError:
+                    st.warning(f"Aucune donnée disponible pour {selected_region_population} en {selected_year_population}.")
+                except KeyError as e:
+                    st.error(f"La colonne '{e}' n'existe pas dans le dataset.")
+                except Exception as e:
+                    st.error(f"Une erreur s'est produite : {e}")
+
+
             else:
                 st.subheader(f"Aperçu du jeu de données : {selected_dataset_name}")
                 st.dataframe(df.head())
