@@ -1,151 +1,416 @@
 import streamlit as st
 import pandas as pd
+from PIL import Image
+import io
+import base64
+import numpy as np
+import gdown
+import os
 
-# Configuration de la page
+# =============================================================================
+# --- 1. CONFIGURATION ---
+# =============================================================================
+
+# Google Drive file IDs
+GOOGLE_DRIVE_CSV_FILE_ID = '1hvEXS7ABSGUh45QHvoR1aCKzJzsQ0S4B'
+GOOGLE_DRIVE_IMG_FILE_ID = '1oVLP_z33SwbFF3rSoqFz0FmqYFbyhN-9'  # Image ID
+
+SECTION_ICONS = {
+    "👋 Introduction": "👋 Introduction",
+    "🔎 Exploration des données": "🔎 Exploration",
+    "📊 Data Visualisation": "📊 Visualisation",
+    "⚙️ Modélisation": "⚙️ Modélisation",
+    "🤖 Prédiction": "🤖 Prédiction",
+    "📌 Conclusion": "📌 Conclusion"
+}
+
+
+# =============================================================================
+# --- 2. STREAMLIT APP CONFIGURATION ---
+# =============================================================================
+
 st.set_page_config(
     page_title="Consommation d'Électricité en France",
     page_icon="⚡",
     layout="wide"
 )
 
-# Sidebar Menu
+
+# =============================================================================
+# --- 3. SIDEBAR ---
+# =============================================================================
+
 with st.sidebar:
     st.markdown("<h1 style='color: #5533FF;'>📚 Sommaire</h1>", unsafe_allow_html=True)
     choix = st.radio(
         "Aller vers 👇",
-        ["👋 Introduction", "🔎 Exploration des données", "📊 Data Visualisation", "⚙️ Modélisation", "🤖 Prédiction", "📌 Conclusion"]
+        list(SECTION_ICONS.keys()),
+        key='choix_radio',
+        format_func=lambda x: SECTION_ICONS.get(x, x)  # Use icons for options
     )
+    st.session_state.choix = choix
     st.markdown("<br><br>", unsafe_allow_html=True)
     st.markdown("🔗 [Contactez-nous](https://www.linkedin.com/in/jeremyvanerpe)")
 
-# Section d'introduction
-if choix == "👋 Introduction":
+
+# =============================================================================
+# --- 4. DATA LOADING FUNCTIONS ---
+# =============================================================================
+
+@st.cache_data
+def load_data(file_id):
+    """Loads data from a CSV file hosted on Google Drive."""
+    output_path = f"temp_data_{file_id}.csv"
+    try:
+        url = f'https://drive.google.com/uc?id={file_id}'
+        actual_output_path = gdown.download(url, output_path, quiet=True, fuzzy=True)
+
+        if not actual_output_path or not os.path.exists(actual_output_path):
+            st.error(f"Failed to download CSV file (ID: {file_id}). Check ID and sharing permissions.")
+            return {}
+
+        try:
+            eco2mix_df = pd.read_csv(actual_output_path, sep=';', encoding='utf-8')
+        except UnicodeDecodeError:
+            st.warning("UTF-8 decoding failed, trying latin-1 for CSV.")
+            eco2mix_df = pd.read_csv(actual_output_path, sep=';', encoding='latin-1')
+
+        eco2mix_df = eco2mix_df.replace('ND', np.nan)
+        data = {"📁 Dataset Eco2mix (Fichier de base du projet)": eco2mix_df}
+        return data
+
+    except Exception as e:
+        st.error(f"Error loading or processing CSV data: {e}")
+        return {}
+
+    finally:
+        if 'actual_output_path' in locals() and os.path.exists(actual_output_path):
+            try:
+                os.remove(actual_output_path)
+            except OSError as e:
+                st.warning(f"Could not remove temporary file {actual_output_path}: {e}")
+
+
+@st.cache_data
+def load_and_process_image(image_file_id):
+    """Loads and processes an image from Google Drive."""
+    output_path = f"temp_image_{image_file_id}"
+    image_data = {"img_str": None, "mime_type": "image/png"}
+
+    try:
+        url = f'https://drive.google.com/uc?id={image_file_id}'
+        actual_output_path = gdown.download(url, output_path, quiet=True, fuzzy=True)
+
+        if not actual_output_path or not os.path.exists(actual_output_path):
+            st.error(f"Failed to download image (ID: {image_file_id}). Check ID and permissions.")
+            return image_data
+
+        image = Image.open(actual_output_path)
+
+        # Resize
+        width, height = image.size
+        max_width = 400
+        if width > max_width:
+            ratio = max_width / width
+            height = int(height * ratio)
+            width = max_width
+        image = image.resize((width, height))
+
+        # Convert image to base64 string
+        buffered = io.BytesIO()
+        save_format = image.format or 'PNG'  # Default to PNG
+        save_format = save_format.upper()
+        if save_format == 'JPG':
+            save_format = 'JPEG'
+
+        if save_format not in ['JPEG', 'PNG', 'GIF', 'WEBP', 'BMP']:
+            st.warning(f"Original image format '{save_format}' not directly supported, converting to PNG.")
+            save_format = 'PNG'
+            if image.mode in ['P', 'RGBA']:
+                image = image.convert('RGB')  # Or RGBA if you need transparency
+
+        image.save(buffered, format=save_format)
+        img_str = base64.b64encode(buffered.getvalue()).decode()
+        mime_type = Image.MIME.get(save_format, 'image/png')
+        image_data["img_str"] = img_str
+        image_data["mime_type"] = mime_type
+        return image_data
+
+    except FileNotFoundError:
+        st.error(f"Temporary image file not found after download: {output_path}")
+        return image_data
+    except Exception as e:
+        st.error(f"Error loading or processing the image: {e}")
+        return image_data
+    finally:
+        if 'actual_output_path' in locals() and os.path.exists(actual_output_path):
+            try:
+                os.remove(actual_output_path)
+            except OSError as e:
+                st.warning(f"Could not remove temporary image file {actual_output_path}: {e}")
+
+
+# =============================================================================
+# --- 5. MAIN APP LOGIC ---
+# =============================================================================
+
+datasets = load_data(GOOGLE_DRIVE_CSV_FILE_ID)
+# Handle case where session state might not have 'choix' initially
+if 'choix' not in st.session_state:
+    st.session_state.choix = list(SECTION_ICONS.keys())[0] # Default to first item
+
+current_choice = st.session_state.choix
+
+
+# =============================================================================
+# --- 6. PAGE CONTENT ---
+# =============================================================================
+
+if current_choice == "👋 Introduction":
+
+    # Introduction Section Content
     st.markdown("<h1 style='text-align: center; color: #5533FF;'>👋 Bienvenue sur notre projet de consommation d'électricité en France ⚡</h1>", unsafe_allow_html=True)
     st.markdown(
         """
         <p style='text-align: center; font-size: 18px;'>
-        La consommation d'électricité est un enjeu majeur dans la transition énergétique. Ce projet explore les données françaises
-        afin de mieux comprendre les tendances de consommation, visualiser les variations saisonnières, 
-        et prévoir la demande énergétique future. 🌱
+        La consommation d'électricité est un enjeu majeur dans la transition énergétique. Ce projet explore les données françaises afin de mieux comprendre les tendances de consommation,
+        visualiser les variations saisonnières, et prévoir la demande énergétique future. 🌱
         </p>
         """,
         unsafe_allow_html=True
     )
-    st.write("""
-    💡 **Pourquoi ce projet ?**  
-    La transition énergétique est l'un des plus grands défis du XXIe siècle. La consommation d'électricité varie selon les saisons, les jours de la semaine, et même les heures de la journée.  
-    Ce projet se concentre sur **l'analyse des données de consommation d'électricité en France** afin d'identifier des tendances, des anomalies, et d'établir des modèles prédictifs qui pourraient être utiles aux acteurs du secteur énergétique.
 
-    🔎 **Objectifs du projet :**  
+    st.write("""
+    💡 **Pourquoi ce projet ?**
+    L'énergie occupe une place centrale dans les défis environnementaux et sociétaux contemporains. La France, avec son mix énergétique spécifique, offre une opportunité unique d'explorer
+    les dynamiques de production et de consommation, particulièrement marquée par la prédominance du nucléaire et la croissance des énergies renouvelables. Ce projet vise à répondre aux
+    enjeux stratégiques suivants :
+    - Étudier l'évolution temporelle de la consommation et production énergétiques en France.
+    - Mettre en relation ces tendances avec des facteurs clés tels que la démographie, les conditions climatiques, et les activités économiques.
+    - Développer des outils prédictifs pour mieux anticiper les besoins énergétiques et optimiser les ressources.
+    """)
+
+    st.write("""
+    🔎 **Objectifs du projet :**
     - Explorer les données de consommation d'électricité en France
     - Créer des visualisations interactives des tendances énergétiques
-    - Construire des modèles de prédiction basés sur les données historiques
-    - Fournir des insights utiles pour la transition énergétique et la gestion de la demande
+    - Construire des modèles de machine learning basés sur les données historiques
+    - Fournir des insights utiles pour la gestion de la demande en électricité
     """)
-    st.image(
-        "https://upload.wikimedia.org/wikipedia/commons/thumb/3/33/France_energy_mix.png/800px-France_energy_mix.png",
-        caption=""
-    )
+
+    image_data = load_and_process_image(GOOGLE_DRIVE_IMG_FILE_ID)
+    if image_data and image_data["img_str"]:
+        img_str = image_data["img_str"]
+        mime_type = image_data["mime_type"]
+        html_code = f"""
+        <div style="display: flex; justify-content: center; margin-top: 20px; margin-bottom: 10px;">
+            <img src="data:{mime_type};base64,{img_str}" alt="Énergie éolienne" style="max-width: 400px; border-radius: 8px;">
+        </div>
+        <p style="text-align: center; font-style: italic;">Énergie éolienne</p>
+        """
+        st.markdown(html_code, unsafe_allow_html=True)
+
+    if "show_exploration_message" not in st.session_state:
+        st.session_state.show_exploration_message = False
+
     if st.button("🚀 Commencer l'exploration"):
-        st.write("Vous êtes prêt à découvrir les données énergétiques ! 🌍")
+        st.session_state.show_exploration_message = True
+        st.session_state.choix = "🔎 Exploration des données" # Change state
+        st.rerun() # Rerun the script to reflect the state change
 
-# Section d'exploration des données
-elif choix == "🔎 Exploration des données":
-    st.title("🔎 Exploration des Données")
-    
-    # Chargement des données
-    file_path = '/workspaces/French_energie/eco2mix-regional-cons-def.csv'
-    data = pd.read_csv(file_path, sep=';')
+    if st.session_state.show_exploration_message:
+        st.success("Vous êtes prêt à découvrir les données énergétiques ! 🌍")
 
-    # Aperçu des données
-    st.subheader("Aperçu des données")
-    st.write(data.head())
 
-    # Informations sur les colonnes
-    st.subheader("Informations sur les colonnes")
-    st.write("Nombre de colonnes : ", len(data.columns))
-    st.write("Colonnes disponibles :", list(data.columns))
+elif current_choice == "🔎 Exploration des données":
 
-    # Statistiques descriptives
-    st.subheader("Statistiques descriptives")
-    st.write(data.describe())
+    # Data Exploration Section Content
+    st.markdown("<h1 style='text-align: left;'>🔎 Exploration des Données</h1>", unsafe_allow_html=True)
+    st.subheader("Sélectionnez un dataset à explorer")
 
-    # Comptage des valeurs manquantes
-    st.subheader("Valeurs manquantes")
-    st.write(data.isnull().sum())
+    if not datasets:
+        st.error("Le chargement du dataset principal a échoué. Impossible de continuer l'exploration.")
+    else:
+        dataset_names = list(datasets.keys())
+        selected_dataset_name = st.selectbox(
+            "Choisissez un dataset :",
+            dataset_names
+        )
 
-    # Filtres interactifs
-    st.subheader("Filtrer les données par région et date")
-    regions = data['Région'].unique()
-    selected_region = st.selectbox("Sélectionnez une région", regions)
-    filtered_data = data[data['Région'] == selected_region]
+        if selected_dataset_name in datasets:
+            df = datasets[selected_dataset_name]  # Renamed to 'df' for brevity
 
-    dates = filtered_data['Date'].unique()
-    selected_date = st.selectbox("Sélectionnez une date", dates)
-    filtered_data_by_date = filtered_data[filtered_data['Date'] == selected_date]
+            if selected_dataset_name == "📁 Dataset Eco2mix (Fichier de base du projet)":
+                st.markdown("""<h3 style='text-align: left;'> 📝 Aperçu du jeu de données Eco2mix <a href="https://www.rte-france.com/eco2mix" target="_blank">→</a></h3>""", unsafe_allow_html=True)
+                # You might want to add a more detailed description here
+                st.write("""Le jeu de données Eco2mix provient de RTE (Réseau de Transport d'Électricité) et contient des informations détaillées sur la production et la consommation d'électricité en France, agrégées par région et par pas de temps (souvent demi-horaire ou horaire).""")
+                st.write("Voici un aperçu des 5 premières lignes du DataFrame :")
+                st.dataframe(df.head())
+                st.markdown("<h3 style='text-align: left;'>❓ Analyse des valeurs manquantes</h3>", unsafe_allow_html=True)
+                # Add description for missing values context
+                st.write("""Les valeurs manquantes (initialement marquées comme 'ND' pour 'Non Disponible' dans les fichiers source de RTE) ont été converties en `NaN` (Not a Number) pour une analyse standard avec pandas. Ci-dessous, le nombre de valeurs manquantes pour chaque colonne qui en contient.""")
 
-    st.write("Données filtrées :", filtered_data_by_date)
+                # Calculate missing values
+                missing_values = df.isnull().sum()
 
-    # Graphique interactif - Consommation par région
-    st.subheader("📊 Consommation d'électricité par source")
-    fig = px.line(
-        filtered_data_by_date,
-        x='Heure',
-        y=['Consommation (MW)', 'Thermique (MW)', 'Nucléaire (MW)', 'Eolien (MW)', 'Solaire (MW)', 'Hydraulique (MW)'],
-        title=f"Consommation d'électricité le {selected_date} dans la région {selected_region}"
-    )
-    st.plotly_chart(fig)
+                # Filter to show only columns with missing values
+                missing_values = missing_values[missing_values > 0]
 
-    # Histogramme interactif - Distribution de la consommation
-    st.subheader("📈 Distribution de la consommation")
-    fig_hist = px.histogram(
-        filtered_data_by_date,
-        x='Consommation (MW)',
-        nbins=30,
-        title=f"Distribution de la consommation le {selected_date} dans la région {selected_region}"
-    )
-    st.plotly_chart(fig_hist)
+                # Create a DataFrame from the filtered missing values
+                missing_values_df = pd.DataFrame({'Valeurs Manquantes (NaN)': missing_values})
 
-    # Résumé dynamique des tendances
-    st.subheader("🔍 Résumé des tendances")
-    moyenne_consommation = filtered_data_by_date['Consommation (MW)'].mean()
-    st.write(f"💡 La consommation moyenne le {selected_date} dans la région {selected_region} est de {moyenne_consommation:.2f} MW.")
+                # --- MODIFIED SECTION START ---
+                # Adjust column width using CSS injection if there are missing values
+                if not missing_values_df.empty:
+                    st.markdown("<p style='font-weight: bold;'>Nombre de valeurs manquantes par colonne:</p>", unsafe_allow_html=True)
+                    # Inject CSS to adjust table column width TO FIT CONTENT
+                    st.markdown(
+                        """
+                        <style>
+                        /* Target tables specifically within the Streamlit app's main block for more specificity if needed, */
+                        /* but for st.table, targeting 'table' generally works. */
+                        /* Set table width to auto to fit content */
+                        table {
+                            width: auto !important; /* Change from 100% to auto */
+                            margin-bottom: 1rem; /* Optional: Add some space below the table */
+                        }
+                        /* Keep column widths automatic */
+                        th, td {
+                            width: auto !important;
+                            text-align: left !important; /* Align text left for readability */
+                            padding-right: 20px; /* Add some padding between columns */
+                        }
+                        /* Ensure the header text is also left-aligned */
+                        thead th {
+                             text-align: left !important;
+                        }
+                        </style>
+                        """,
+                        unsafe_allow_html=True,
+                    )
+                    # Display the table using st.table (better for small static tables)
+                    # Hide the index as it's redundant here
+                    st.table(missing_values_df.style.format(precision=0).hide(axis="index"))
+                else:
+                    st.info("Aucune valeur manquante trouvée dans le dataset.")
+                # --- MODIFIED SECTION END ---
 
-# Section Data Visualisation
-elif choix == "📊 Data Visualisation":
-    st.title("📊 Data Visualisation")
-    st.write("""
-    Explorez les visualisations interactives qui illustrent les tendances de consommation d'électricité.
-    """)
+                # --- REGION AND DATE FILTERING ---
+                st.subheader("Filtrer les données Eco2mix")
 
-# Section Modélisation
-elif choix == "⚙️ Modélisation":
-    st.title("⚙️ Modélisation")
-    st.write("""
-    Ici, nous allons construire et tester un modèle de prédiction basé sur les données de consommation passées.
-    """)
+                # Ensure 'Région' column exists
+                if 'Région' not in df.columns:
+                    st.error("La colonne 'Région' est manquante dans le dataset Eco2mix.")
+                else:
+                    # Check if 'Région' column has data
+                    if df['Région'].isnull().all():
+                         st.warning("La colonne 'Région' existe mais ne contient aucune donnée.")
+                         regions = []
+                    else:
+                         regions = sorted(df['Région'].dropna().unique())
 
-# Section Prédiction
-elif choix == "🤖 Prédiction":
-    st.title("🤖 Prédiction")
-    st.write("""
-    Découvrez les prédictions de la consommation d'électricité future basées sur notre modèle.
-    """)
+                    if not regions:
+                        st.info("Aucune région disponible pour le filtrage.")
+                    else:
+                        selected_region = st.selectbox("Sélectionner une Région:", regions)
 
-# Section Conclusion
-elif choix == "📌 Conclusion":
-    st.title("📌 Conclusion")
-    st.write("""
-    Résumons les principales découvertes du projet et examinons les perspectives pour la consommation d'énergie en France.
-    """)
+                        # Ensure 'Date' column exists and convert it to datetime objects if it's not already
+                        if 'Date' not in df.columns:
+                            st.error("La colonne 'Date' est manquante dans le dataset Eco2mix.")
+                        else:
+                            try:
+                                # Convert to datetime only if not already done (idempotent)
+                                if not pd.api.types.is_datetime64_any_dtype(df['Date']):
+                                     df['Date'] = pd.to_datetime(df['Date'], errors='coerce') # Coerce invalid dates to NaT
 
-# Footer
-st.markdown("<hr>", unsafe_allow_html=True)
+                                # Drop rows where Date conversion failed
+                                df.dropna(subset=['Date'], inplace=True)
+
+                                if df['Date'].empty:
+                                    st.warning("Aucune date valide trouvée après conversion.")
+                                else:
+                                    min_date = df['Date'].min().date()
+                                    max_date = df['Date'].max().date()
+                                    # Ensure default value is within bounds
+                                    default_date = min_date if min_date <= max_date else max_date
+                                    selected_date_input = st.date_input("Sélectionner une Date:",
+                                                                        min_value=min_date,
+                                                                        max_value=max_date,
+                                                                        value=default_date) # Use corrected default
+
+                                    # Convert selected_date_input (which is datetime.date) for comparison
+                                    selected_date = pd.to_datetime(selected_date_input).date()
+
+
+                                    # Filter the DataFrame
+                                    # Ensure 'Consommation (MW)' exists before filtering/summing
+                                    if 'Consommation (MW)' not in df.columns:
+                                        st.error("La colonne 'Consommation (MW)' est manquante.")
+                                        total_consumption = 0 # Or handle differently
+                                        filtered_df = pd.DataFrame() # Empty df
+                                    else:
+                                        # Convert 'Consommation (MW)' to numeric, coercing errors
+                                        df['Consommation (MW)'] = pd.to_numeric(df['Consommation (MW)'], errors='coerce')
+
+                                        filtered_df = df[(df['Région'] == selected_region) & (df['Date'].dt.date == selected_date)].copy() # Use .copy() to avoid SettingWithCopyWarning
+
+                                        # Calculate total consumption on the filtered (and numeric) data
+                                        total_consumption = filtered_df['Consommation (MW)'].sum() # NaNs are automatically skipped by sum()
+
+                                        # Display filtered data if needed
+                                        # st.write("Données filtrées :")
+                                        # st.dataframe(filtered_df)
+
+
+                                    # Format consumption AFTER calculation
+                                    # Use French locale formatting if possible, otherwise manual replacement
+                                    try:
+                                        # Attempt locale-based formatting (might require locale setup on the system/container)
+                                        import locale
+                                        try:
+                                            locale.setlocale(locale.LC_ALL, 'fr_FR.UTF-8') # Try common French locale
+                                        except locale.Error:
+                                            locale.setlocale(locale.LC_ALL, 'French_France.1252') # Try Windows French locale
+                                        formatted_consumption = locale.format_string("%.0f", total_consumption, grouping=True)
+                                    except (ImportError, locale.Error):
+                                        # Fallback manual formatting
+                                        formatted_consumption = "{:,.0f}".format(total_consumption).replace(",", " ").replace(".", ",") # Use space for thousands
+
+
+                                    st.markdown(f"<h4 style='font-weight: bold;'>Consommation totale d'électricité le {selected_date_input.strftime('%d/%m/%Y')} en {selected_region}: <span style='color: #5533FF;'>{formatted_consumption} MW</span></h4>", unsafe_allow_html=True)
+
+
+                            except Exception as e: # Catch broader exceptions during date processing
+                                st.error(f"Erreur lors du traitement de la colonne 'Date' ou du filtrage : {e}")
+
+
+            else:
+                st.subheader(f"Aperçu du jeu de données : {selected_dataset_name}")
+                st.dataframe(df.head())
+        else:
+            st.warning(f"Dataset '{selected_dataset_name}' could not be loaded or does not exist.")
+
+
+elif current_choice in ["📊 Data Visualisation", "⚙️ Modélisation", "🤖 Prédiction", "📌 Conclusion"]:
+
+    # Under Development Sections
+    # Extract title robustly, handling potential missing space
+    section_title = SECTION_ICONS.get(current_choice, current_choice).split(' ', 1)[-1] if ' ' in SECTION_ICONS.get(current_choice, current_choice) else current_choice
+    st.title(section_title)
+    st.info("🚧 Section en cours de développement 🚧")
+    st.write("Revenez bientôt pour découvrir les visualisations, les modèles et les prédictions !")
+
+
+# =============================================================================
+# --- 7. FOOTER ---
+# =============================================================================
+
+st.markdown("<hr style='margin-top: 3rem; margin-bottom: 1.5rem;'>", unsafe_allow_html=True)
 st.markdown(
     """
-    <div style='text-align: center;'>
-        Créé avec ❤️ par <a href='https://www.linkedin.com/in/jeremyvanerpe' target='_blank'>Jérémy VAN ERPE</a> |
-        Suivez-moi sur <a href='https://github.com/vanerpe' target='_blank'>GitHub</a> ⚡
+    <div style='text-align: center; font-size: 0.9em; color: #777;'>
+        Créé avec ❤️ par <a href='https://www.linkedin.com/in/jeremyvanerpe' target='_blank' style='color: #5533FF; text-decoration: none;'>Jérémy VAN ERPE</a> |
+        Code source sur <a href='https://github.com/vanerpe' target='_blank' style='color: #5533FF; text-decoration: none;'>GitHub</a> ⚡
     </div>
     """,
     unsafe_allow_html=True
