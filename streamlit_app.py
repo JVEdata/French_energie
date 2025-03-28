@@ -30,8 +30,7 @@ SECTION_ICONS = {
 st.set_page_config(
     page_title="Consommation d'Électricité en France",
     page_icon="⚡",
-    layout="wide",
-    theme="dark"  # Force le thème dark ici !
+    layout="wide"
 )
 
 # =============================================================================
