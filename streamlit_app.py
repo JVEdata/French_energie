@@ -20,10 +20,8 @@ SECTION_ICONS = {
     "🔎 Exploration des données": "🔎 Exploration",
     "📊 Data Visualisation": "📊 Visualisation",
     "⚙️ Modélisation": "⚙️ Modélisation",
-    "🤖 Prédiction": "🤖 Prédiction",
     "📌 Conclusion": "📌 Conclusion"
 }
-
 
 # =============================================================================
 # --- 2. STREAMLIT APP CONFIGURATION ---
@@ -34,7 +32,6 @@ st.set_page_config(
     page_icon="⚡",
     layout="wide"
 )
-
 
 # =============================================================================
 # --- 3. SIDEBAR ---
@@ -51,7 +48,6 @@ with st.sidebar:
     st.session_state.choix = choix
     st.markdown("<br><br>", unsafe_allow_html=True)
     st.markdown("🔗 [Contactez-nous](https://www.linkedin.com/in/jeremyvanerpe)")
-
 
 # =============================================================================
 # --- 4. DATA LOADING FUNCTIONS ---
@@ -89,7 +85,6 @@ def load_data(file_id):
                 os.remove(actual_output_path)
             except OSError as e:
                 st.warning(f"Could not remove temporary file {actual_output_path}: {e}")
-
 
 @st.cache_data
 def load_and_process_image(image_file_id):
@@ -149,7 +144,6 @@ def load_and_process_image(image_file_id):
             except OSError as e:
                 st.warning(f"Could not remove temporary image file {actual_output_path}: {e}")
 
-
 # =============================================================================
 # --- 5. MAIN APP LOGIC ---
 # =============================================================================
@@ -160,7 +154,6 @@ if 'choix' not in st.session_state:
     st.session_state.choix = list(SECTION_ICONS.keys())[0] # Default to first item
 
 current_choice = st.session_state.choix
-
 
 # =============================================================================
 # --- 6. PAGE CONTENT ---
@@ -221,7 +214,6 @@ if current_choice == "👋 Introduction":
     if st.session_state.show_exploration_message:
         st.success("Vous êtes prêt à découvrir les données énergétiques ! 🌍")
 
-
 elif current_choice == "🔎 Exploration des données":
 
     # Data Exploration Section Content
@@ -241,62 +233,37 @@ elif current_choice == "🔎 Exploration des données":
             df = datasets[selected_dataset_name]  # Renamed to 'df' for brevity
 
             if selected_dataset_name == "📁 Dataset Eco2mix (Fichier de base du projet)":
-                st.markdown("""<h3 style='text-align: left;'> 📝 Aperçu du jeu de données Eco2mix <a href="https://www.rte-france.com/eco2mix" target="_blank">→</a></h3>""", unsafe_allow_html=True)
+                st.markdown("<hr style='border: 1px solid #444;'>", unsafe_allow_html=True)
+                st.markdown("""<h3 style='text-align: left;'> 📝 Aperçu de Dataset Eco2mix """, unsafe_allow_html=True)
                 # You might want to add a more detailed description here
-                st.write("""Le jeu de données Eco2mix provient de RTE (Réseau de Transport d'Électricité) et contient des informations détaillées sur la production et la consommation d'électricité en France, agrégées par région et par pas de temps (souvent demi-horaire ou horaire).""")
-                st.write("Voici un aperçu des 5 premières lignes du DataFrame :")
+                st.write("""Le dataset Eco2mix est le cœur de ce projet. Il regroupe des données régionales et nationales sur la production et la consommation électrique en France, collectées à des intervalles de 30 minutes depuis 2013. Cette granularité permet d'identifier les variations saisonnières, les anomalies, et les tendances de long terme.""")
+                st.write("Voici un aperçu des 5 premières lignes de la DataFrame :")
                 st.dataframe(df.head())
+
+                # --- Analysis of Missing Values Section ---
+                st.markdown("<hr style='border: 1px solid #444;'>", unsafe_allow_html=True)
                 st.markdown("<h3 style='text-align: left;'>❓ Analyse des valeurs manquantes</h3>", unsafe_allow_html=True)
-                # Add description for missing values context
-                st.write("""Les valeurs manquantes (initialement marquées comme 'ND' pour 'Non Disponible' dans les fichiers source de RTE) ont été converties en `NaN` (Not a Number) pour une analyse standard avec pandas. Ci-dessous, le nombre de valeurs manquantes pour chaque colonne qui en contient.""")
+                st.write("Les valeurs manquantes dans le dataset sont principalement dues à plusieurs facteurs:")
+                st.markdown("""
+                <ul>
+                    <li>Nucléaire : Certaines régions ne produisent pas d'énergie nucléaire, ce qui explique des cellules vides.</li>
+                    <li>Stockage/Déstockage batterie, Éolien terrestre/offshore, TCO et TCH : Ces colonnes n'ont commencé à être renseignées qu'à une date ultérieure, augmentant les NaN pour les périodes antérieures. Pour garantir une analyse robuste, nous veillerons à sélectionner une plage de dates commune pour les analyses impliquant ces colonnes.</li>
+                </ul>
+                """, unsafe_allow_html=True)
 
-                # Calculate missing values
+                st.write("Nombre de valeurs manquantes par colonne:")
+
+                # Calculate missing values per column
                 missing_values = df.isnull().sum()
+                missing_values_df = pd.DataFrame({'Column': missing_values.index, 'Missing Count': missing_values.values})
 
-                # Filter to show only columns with missing values
-                missing_values = missing_values[missing_values > 0]
+                # Display the table using st.dataframe
+                st.dataframe(missing_values_df)
 
-                # Create a DataFrame from the filtered missing values
-                missing_values_df = pd.DataFrame({'Valeurs Manquantes (NaN)': missing_values})
+                # --- "Filter Data" Button ---
+                st.markdown("<hr style='border: 1px solid #444;'>", unsafe_allow_html=True)
+                st.markdown("<h3 style='text-align: left;'>🗓️ Filtrer les données par région, jour, mois et année", unsafe_allow_html=True)
 
-                # --- MODIFIED SECTION START ---
-                # Adjust column width using CSS injection if there are missing values
-                if not missing_values_df.empty:
-                    st.markdown("<p style='font-weight: bold;'>Nombre de valeurs manquantes par colonne:</p>", unsafe_allow_html=True)
-                    # Inject CSS to adjust table column width TO FIT CONTENT
-                    st.markdown(
-                        """
-                        <style>
-                        /* Target tables specifically within the Streamlit app's main block for more specificity if needed, */
-                        /* but for st.table, targeting 'table' generally works. */
-                        /* Set table width to auto to fit content */
-                        table {
-                            width: auto !important; /* Change from 100% to auto */
-                            margin-bottom: 1rem; /* Optional: Add some space below the table */
-                        }
-                        /* Keep column widths automatic */
-                        th, td {
-                            width: auto !important;
-                            text-align: left !important; /* Align text left for readability */
-                            padding-right: 20px; /* Add some padding between columns */
-                        }
-                        /* Ensure the header text is also left-aligned */
-                        thead th {
-                             text-align: left !important;
-                        }
-                        </style>
-                        """,
-                        unsafe_allow_html=True,
-                    )
-                    # Display the table using st.table (better for small static tables)
-                    # Hide the index as it's redundant here
-                    st.table(missing_values_df.style.format(precision=0).hide(axis="index"))
-                else:
-                    st.info("Aucune valeur manquante trouvée dans le dataset.")
-                # --- MODIFIED SECTION END ---
-
-                # --- REGION AND DATE FILTERING ---
-                st.subheader("Filtrer les données Eco2mix")
 
                 # Ensure 'Région' column exists
                 if 'Région' not in df.columns:
@@ -304,10 +271,10 @@ elif current_choice == "🔎 Exploration des données":
                 else:
                     # Check if 'Région' column has data
                     if df['Région'].isnull().all():
-                         st.warning("La colonne 'Région' existe mais ne contient aucune donnée.")
-                         regions = []
+                            st.warning("La colonne 'Région' existe mais ne contient aucune donnée.")
+                            regions = []
                     else:
-                         regions = sorted(df['Région'].dropna().unique())
+                            regions = sorted(df['Région'].dropna().unique())
 
                     if not regions:
                         st.info("Aucune région disponible pour le filtrage.")
@@ -319,9 +286,9 @@ elif current_choice == "🔎 Exploration des données":
                             st.error("La colonne 'Date' est manquante dans le dataset Eco2mix.")
                         else:
                             try:
-                                # Convert to datetime only if not already done (idempotent)
+                                # Convert to datetime only if not pd.api.types.is_datetime64_any_dtype(df['Date']):
                                 if not pd.api.types.is_datetime64_any_dtype(df['Date']):
-                                     df['Date'] = pd.to_datetime(df['Date'], errors='coerce') # Coerce invalid dates to NaT
+                                    df['Date'] = pd.to_datetime(df['Date'], errors='coerce') # Coerce invalid dates to NaT
 
                                 # Drop rows where Date conversion failed
                                 df.dropna(subset=['Date'], inplace=True)
@@ -335,8 +302,8 @@ elif current_choice == "🔎 Exploration des données":
                                     default_date = min_date if min_date <= max_date else max_date
                                     selected_date_input = st.date_input("Sélectionner une Date:",
                                                                         min_value=min_date,
-                                                                        max_value=max_date,
-                                                                        value=default_date) # Use corrected default
+                                                        max_value=max_date,
+                                                        value=default_date) # Use corrected default
 
                                     # Convert selected_date_input (which is datetime.date) for comparison
                                     selected_date = pd.to_datetime(selected_date_input).date()
@@ -361,35 +328,46 @@ elif current_choice == "🔎 Exploration des données":
                                         # st.write("Données filtrées :")
                                         # st.dataframe(filtered_df)
 
-
-                                    # Format consumption AFTER calculation
-                                    # Use French locale formatting if possible, otherwise manual replacement
-                                    try:
-                                        # Attempt locale-based formatting (might require locale setup on the system/container)
-                                        import locale
+                                        # Format consumption AFTER calculation
+                                        # Use French locale formatting if possible, otherwise manual replacement
                                         try:
-                                            locale.setlocale(locale.LC_ALL, 'fr_FR.UTF-8') # Try common French locale
-                                        except locale.Error:
-                                            locale.setlocale(locale.LC_ALL, 'French_France.1252') # Try Windows French locale
-                                        formatted_consumption = locale.format_string("%.0f", total_consumption, grouping=True)
-                                    except (ImportError, locale.Error):
-                                        # Fallback manual formatting
-                                        formatted_consumption = "{:,.0f}".format(total_consumption).replace(",", " ").replace(".", ",") # Use space for thousands
+                                            # Attempt locale-based formatting (might require locale setup on the system/container)
+                                            import locale
+                                            try:
+                                                locale.setlocale(locale.LC_ALL, 'fr_FR.UTF-8') # Try common French locale
+                                            except locale.Error:
+                                                locale.setlocale(locale.LC_ALL, 'French_France.1252') # Try Windows French locale
+                                            formatted_consumption = locale.format_string("%.0f", total_consumption, grouping=True)
+                                        except (ImportError, locale.Error):
+                                            # Fallback manual formatting
+                                            formatted_consumption = "{:,.0f}".format(total_consumption).replace(",", " ").replace(".", ",") # Use space for thousands
+
+                                        st.markdown(f"""
+    <div style='background-color: #1E1E2F; padding: 20px; border-radius: 8px; text-align: center;'>
+        <h4 style='font-weight: bold; color: white; margin-bottom: 10px;'>💡 Consommation totale d'électricité ⚡</h4>
+        <p style='color: #BBBBBB; font-size: 16px;'>
+            <span style='font-weight: bold; font-size: 18px; color: #FF8C00; text-shadow: 0px 0px 10px rgba(255, 140, 0, 0.6);'>
+                📅 <span style='color: #FFD700; font-size: 20px;'>le {selected_date_input.strftime('%d/%m/%Y')} en {selected_region}</span> 🌍
+            </span>
+        </p>
+        <h2 style='color: #5533FF; font-weight: bold; letter-spacing: 1px;'>
+            {formatted_consumption} MW ⚡ 🔋
+        </h2>
+    </div>
+""", unsafe_allow_html=True)
 
 
-                                    st.markdown(f"<h4 style='font-weight: bold;'>Consommation totale d'électricité le {selected_date_input.strftime('%d/%m/%Y')} en {selected_region}: <span style='color: #5533FF;'>{formatted_consumption} MW</span></h4>", unsafe_allow_html=True)
+
+
 
 
                             except Exception as e: # Catch broader exceptions during date processing
                                 st.error(f"Erreur lors du traitement de la colonne 'Date' ou du filtrage : {e}")
-
-
             else:
                 st.subheader(f"Aperçu du jeu de données : {selected_dataset_name}")
                 st.dataframe(df.head())
         else:
             st.warning(f"Dataset '{selected_dataset_name}' could not be loaded or does not exist.")
-
 
 elif current_choice in ["📊 Data Visualisation", "⚙️ Modélisation", "🤖 Prédiction", "📌 Conclusion"]:
 
@@ -399,7 +377,6 @@ elif current_choice in ["📊 Data Visualisation", "⚙️ Modélisation", "🤖
     st.title(section_title)
     st.info("🚧 Section en cours de développement 🚧")
     st.write("Revenez bientôt pour découvrir les visualisations, les modèles et les prédictions !")
-
 
 # =============================================================================
 # --- 7. FOOTER ---
