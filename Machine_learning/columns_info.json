@@ -1,0 +1,30 @@
+{
+    "original_features": [
+        "region",
+        "tmoy_degc",
+        "population",
+        "nb_total_entreprise",
+        "year",
+        "month",
+        "day",
+        "dayofweek",
+        "dayofyear",
+        "weekofyear",
+        "quarter"
+    ],
+    "numerical_features": [
+        "tmoy_degc",
+        "population",
+        "nb_total_entreprise",
+        "year",
+        "month",
+        "day",
+        "dayofweek",
+        "dayofyear",
+        "weekofyear",
+        "quarter"
+    ],
+    "categorical_features": [
+        "region"
+    ]
+}
