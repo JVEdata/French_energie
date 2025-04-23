@@ -1040,12 +1040,16 @@ def get_df_final_data():
 
 
 # =============================================================================
-# --- 6. VISUALIZATIONS DICTIONARY ---
+# --- 6. VISUALIZATIONS DICTIONARY (AVEC CLÉS RENOMMÉES) ---
 # =============================================================================
-# (Code inchangé ici)
+# /!\ ATTENTION : Les clés ont été renommées.
+# La logique pour récupérer le numéro de l'image (ex: '1.png') à partir de la clé
+# devra être adaptée dans la section d'affichage Streamlit en utilisant la clé "image_number".
 visualizations_data = {
-    "1. Évolution de la consommation d'énergie en France (2013-2023)": {
-        "category": "Consommation (Tendances & Saisons)", # Ancienne catégorie
+    # --- Catégorie : 📈 Consommation : Tendances & Rythmes ---
+    "1. Évolution Consommation Globale d'Énergie (2013-2023)": {
+        "image_number": 1, # Ajout pour faciliter la récupération de l'image
+        "category": "📈 Consommation : Tendances & Rythmes",
         "text": """Le graphique ci-dessus illustre l'évolution de la consommation d'énergie globale (en MW) sur une
 période proche de la décennie. On observe des variations saisonnières marquées, avec des pics de
 consommation réguliers correspondant probablement aux périodes hivernales, où la demande en
@@ -1054,8 +1058,121 @@ indiquant que la consommation énergétique est influencée de manière signific
 climatiques et les habitudes de consommation. Les données mettent également en évidence une
 certaine stabilité dans les tendances générales de la consommation d'énergie au fil du temps."""
     },
-    "2. Production et consommation électrique : Défis de 2022": {
-        "category": "Production & Mix Énergétique", # Ancienne catégorie
+    "5. Carte Thermique Consommation Électrique Mensuelle (2013-2023)": {
+        "image_number": 5,
+        "category": "📈 Consommation : Tendances & Rythmes",
+        "text": """La carte de chaleur mensuelle de la consommation électrique met en évidence les variations
+saisonnières de la demande énergétique en France, réparties par année et par mois. On observe des
+pics de consommation récurrents en hiver, notamment en janvier et décembre, marqués par des
+teintes rouges foncées, ce qui correspond aux périodes de forte demande liée au chauffage. À
+l'inverse, les mois d'été, en particulier de mai à septembre, montrent une consommation nettement
+plus faible, représentée par des teintes bleues.
+
+L'année 2017 se distingue par un pic exceptionnel de consommation en janvier, probablement en
+raison de conditions climatiques extrêmes, comme une vague de froid. Les tendances générales
+montrent une cyclicité annuelle stable, avec des hausses hivernales et des baisses estivales.
+
+Ce visuel permet de mieux comprendre la relation entre les conditions climatiques et la demande en
+électricité, soulignant l'importance d'une planification énergétique efficace pour répondre aux besoins
+accrus en période hivernale. Il met également en avant l'impact des aléas climatiques sur les
+variations exceptionnelles de la consommation électrique."""
+    },
+    "6. Distribution Saisonnière Consommation Électrique (Demi-heures, National)": {
+        "image_number": 6,
+        "category": "📈 Consommation : Tendances & Rythmes",
+        "text": """Le graphique en boîtes à moustaches (boxplot) présente la distribution de la consommation d'énergie
+en France selon les saisons. On observe que la consommation est nettement plus élevée en hiver,
+avec une médiane située autour de 6 000 MW et des valeurs maximales atteignant près de 16 000
+MW, en raison de la forte demande liée au chauffage. L'automne suit avec une consommation
+relativement élevée, tandis que le printemps et l'été affichent des niveaux de consommation plus
+faibles.
+
+Les boîtes à moustaches montrent également une plus grande variabilité en hiver, avec de nombreux
+points au-dessus des moustaches, indiquant des valeurs extrêmes (pics de consommation). En
+revanche, les saisons plus chaudes (printemps et été) présentent des distributions plus homogènes,
+avec moins de valeurs extrêmes.
+
+Ce visuel met en évidence l'impact des conditions climatiques sur la demande en électricité,
+soulignant l'importance de la saisonnalité dans la gestion de la production et des infrastructures
+énergétiques. La forte consommation hivernale rappelle également la nécessité d'anticiper les
+périodes de forte demande pour éviter les tensions sur le réseau électrique."""
+    },
+    "7. Évolution Journalière Moyenne Consommation Électrique par Saison": {
+        "image_number": 7,
+        "category": "📈 Consommation : Tendances & Rythmes",
+        "text": """Le graphique montre l'évolution temporelle de la consommation moyenne d'électricité par saison,
+répartie tout au long de l'année. La courbe met en évidence des variations saisonnières bien
+distinctes. En hiver (en orange), la consommation d'électricité atteint ses plus hauts niveaux,
+dépassant 6 000 MW en raison des besoins accrus de chauffage. À l'inverse, durant l'été (en rouge),
+la consommation est au plus bas, avec une moyenne autour de 3 500 MW, ce qui reflète une moindre
+utilisation de chauffage et une consommation globalement plus stable.
+
+Le printemps (en vert) et l'automne (en bleu) affichent des niveaux intermédiaires, mais la transition
+entre les saisons montre une tendance claire : la consommation augmente fortement à l'approche de
+l'hiver et diminue progressivement après cette période. Les hausses et baisses sont régulières et
+suivent les cycles naturels des variations climatiques.
+
+Ce visuel met en évidence la forte corrélation entre les saisons et la consommation énergétique. Il
+souligne l'importance de prévoir la demande énergétique en fonction des périodes de l'année afin
+d'optimiser les capacités de production et de répondre aux besoins de manière efficace."""
+    },
+    "8. Profil Horaire Moyen de la Consommation Électrique Nationale": {
+        "image_number": 8,
+        "category": "📈 Consommation : Tendances & Rythmes",
+        "text": """Le graphique illustre la distribution horaire moyenne de la consommation d'électricité sur une journée
+typique. On observe une tendance claire, avec deux pics principaux de consommation : le premier en
+fin de matinée, entre 10 h et 13 h, et le second en début de soirée, autour de 19 h. Ces pics peuvent
+être attribués aux habitudes de la vie quotidienne, comme les activités matinales (chauffage,
+préparation des repas, travail) et les besoins accrus en soirée après le retour à domicile (éclairage,
+électroménagers, cuisine).
+
+La consommation est la plus basse durant les heures nocturnes, entre 1 h et 5 h du matin, reflétant
+une baisse de l'activité économique et domestique. À partir de 6 h, la demande commence à
+augmenter progressivement jusqu'à atteindre le pic de la fin de matinée.
+
+Ce visuel met en évidence les variations de la demande d'électricité en fonction des moments de la
+journée, soulignant l'importance d'ajuster la production énergétique pour répondre aux besoins
+spécifiques de ces périodes de forte consommation. Cette information est essentielle pour la gestion
+des réseaux électriques et l'optimisation des infrastructures énergétiques."""
+    },
+    "3. Répartition Régionale Consommation Totale d'Énergie (2013-2023)": { # Réaffecté
+        "image_number": 3,
+        "category": "📈 Consommation : Tendances & Rythmes",
+        "text": """Ce graphique circulaire présente la répartition de la consommation d'énergie par région en France.
+On constate que l'Île-de-France représente la part la plus importante, avec 15 % de la consommation
+totale, ce qui peut s'expliquer par la densité de population et la concentration d'activités économiques
+dans cette région. Elle est suivie par la région Auvergne-Rhône-Alpes (14 %), qui inclut de grandes
+villes industrielles comme Lyon, et par le Grand Est (10,7 %), connu pour ses besoins énergétiques
+élevés dans le secteur industriel. À l'inverse, des régions comme le Centre-Val de Loire et la
+Bourgogne-Franche-Comté affichent les parts les plus faibles, avec respectivement 4 % et 4,5 %. Ce
+visuel met en lumière les disparités régionales de la consommation énergétique, qui sont influencées
+par la démographie, l'industrialisation et les conditions climatiques locales."""
+    },
+    "11. Carte Régionale de la Consommation Électrique Totale": { # Réaffecté
+        "image_number": 11,
+        "category": "📈 Consommation : Tendances & Rythmes",
+        "text": """La carte présente la consommation totale d'électricité par région en France, exprimée en mégawatts
+(MW). La distribution régionale met en évidence des disparités significatives entre les différentes
+régions. Les régions les plus peuplées et économiquement développées, telles que l'Île-de-France,
+Auvergne-Rhône-Alpes et les Hauts-de-France, affichent les plus hauts niveaux de consommation,
+représentés par les teintes les plus foncées sur la carte. Cela s'explique par une forte concentration
+de population, d'activités industrielles et de services nécessitant une importante consommation
+d'énergie.
+
+À l'inverse, des régions comme la Bretagne, la Normandie ou les Pays de la Loire affichent une
+consommation plus modérée, en raison de leur densité de population plus faible et d'une moindre
+concentration d'activités énergivores.
+
+Ce visuel met en évidence l'importance des facteurs démographiques et économiques dans la
+répartition de la consommation électrique à l'échelle régionale. Il souligne également la nécessité
+d'adapter les politiques énergétiques régionales pour répondre aux besoins spécifiques de chaque
+territoire, en prenant en compte les spécificités locales en matière de production et de consommation."""
+    },
+
+    # --- Catégorie : 🏭 Production & Mix Énergétique ---
+    "2. Bilan Production vs Consommation Électrique (Défis 2022)": {
+        "image_number": 2,
+        "category": "🏭 Production & Mix Énergétique",
         "text": """Le graphique met en évidence la comparaison entre la consommation d'électricité (en rouge) et la
 production totale d'électricité (en bleu) en France pour l'année 2022, avec des périodes de déficit de
 production illustrées par les zones en rose. Notamment, la consommation a souvent dépassé la
@@ -1075,20 +1192,9 @@ de pointe.
 - [Banque de France - Solde énergétique en 2022](https://www.banque-france.fr/fr/publications-et-statistiques/publications/solde-energetique-en-2022-la-crise-de-la-production-electronucleaire-survenue-au-pire-moment)
 - [Primeo Energie - État des lieux du parc nucléaire français](https://www.primeo-energie.fr/actuenergie/etat-des-lieux-du-parc-nucleaire-francais/)"""
     },
-    "3. Répartition régionale de la consommation totale d'énergie en France (2013 à 2023)": {
-        "category": "Analyses Régionales (Énergie & Population)", # Ancienne catégorie
-        "text": """Ce graphique circulaire présente la répartition de la consommation d'énergie par région en France.
-On constate que l'Île-de-France représente la part la plus importante, avec 15 % de la consommation
-totale, ce qui peut s'expliquer par la densité de population et la concentration d'activités économiques
-dans cette région. Elle est suivie par la région Auvergne-Rhône-Alpes (14 %), qui inclut de grandes
-villes industrielles comme Lyon, et par le Grand Est (10,7 %), connu pour ses besoins énergétiques
-élevés dans le secteur industriel. À l'inverse, des régions comme le Centre-Val de Loire et la
-Bourgogne-Franche-Comté affichent les parts les plus faibles, avec respectivement 4 % et 4,5 %. Ce
-visuel met en lumière les disparités régionales de la consommation énergétique, qui sont influencées
-par la démographie, l'industrialisation et les conditions climatiques locales."""
-    },
-    "4. Évolution de la production d'énergie par source (2013-2022)": {
-        "category": "Production & Mix Énergétique", # Ancienne catégorie
+    "4. Évolution Production d'Énergie par Source (2013-2022)": {
+        "image_number": 4,
+        "category": "🏭 Production & Mix Énergétique",
         "text": """Ce graphique en barres empilées présente l'évolution de la répartition des différentes sources
 d'énergie en France de 2013 à 2022. La production nucléaire (en gris) constitue la majeure partie de
 la production énergétique chaque année, confirmant le rôle prédominant de cette source dans le mix
@@ -1107,81 +1213,9 @@ Ce visuel met en évidence la transition énergétique progressive en France, ma
 diversification des sources d'énergie et une montée en puissance des énergies renouvelables, bien
 que le nucléaire reste un pilier central du système énergétique français."""
     },
-    "5. Carte de chaleur de la consommation mensuelle d'électricité (2013-2023)": {
-        "category": "Consommation (Tendances & Saisons)", # Ancienne catégorie
-        "text": """La carte de chaleur mensuelle de la consommation électrique met en évidence les variations
-saisonnières de la demande énergétique en France, réparties par année et par mois. On observe des
-pics de consommation récurrents en hiver, notamment en janvier et décembre, marqués par des
-teintes rouges foncées, ce qui correspond aux périodes de forte demande liée au chauffage. À
-l'inverse, les mois d'été, en particulier de mai à septembre, montrent une consommation nettement
-plus faible, représentée par des teintes bleues.
-
-L'année 2017 se distingue par un pic exceptionnel de consommation en janvier, probablement en
-raison de conditions climatiques extrêmes, comme une vague de froid. Les tendances générales
-montrent une cyclicité annuelle stable, avec des hausses hivernales et des baisses estivales.
-
-Ce visuel permet de mieux comprendre la relation entre les conditions climatiques et la demande en
-électricité, soulignant l'importance d'une planification énergétique efficace pour répondre aux besoins
-accrus en période hivernale. Il met également en avant l'impact des aléas climatiques sur les
-variations exceptionnelles de la consommation électrique."""
-    },
-    "6. Distribution de la consommation électrique moyenne par tranche de demie-heure par saison au niveau national": {
-        "category": "Consommation (Tendances & Saisons)", # Ancienne catégorie
-        "text": """Le graphique en boîtes à moustaches (boxplot) présente la distribution de la consommation d'énergie
-en France selon les saisons. On observe que la consommation est nettement plus élevée en hiver,
-avec une médiane située autour de 6 000 MW et des valeurs maximales atteignant près de 16 000
-MW, en raison de la forte demande liée au chauffage. L'automne suit avec une consommation
-relativement élevée, tandis que le printemps et l'été affichent des niveaux de consommation plus
-faibles.
-
-Les boîtes à moustaches montrent également une plus grande variabilité en hiver, avec de nombreux
-points au-dessus des moustaches, indiquant des valeurs extrêmes (pics de consommation). En
-revanche, les saisons plus chaudes (printemps et été) présentent des distributions plus homogènes,
-avec moins de valeurs extrêmes.
-
-Ce visuel met en évidence l'impact des conditions climatiques sur la demande en électricité,
-soulignant l'importance de la saisonnalité dans la gestion de la production et des infrastructures
-énergétiques. La forte consommation hivernale rappelle également la nécessité d'anticiper les
-périodes de forte demande pour éviter les tensions sur le réseau électrique."""
-    },
-    "7. Évolution temporelle par jour de la consommation électrique moyenne par saison": {
-        "category": "Consommation (Tendances & Saisons)", # Ancienne catégorie
-        "text": """Le graphique montre l'évolution temporelle de la consommation moyenne d'électricité par saison,
-répartie tout au long de l'année. La courbe met en évidence des variations saisonnières bien
-distinctes. En hiver (en orange), la consommation d'électricité atteint ses plus hauts niveaux,
-dépassant 6 000 MW en raison des besoins accrus de chauffage. À l'inverse, durant l'été (en rouge),
-la consommation est au plus bas, avec une moyenne autour de 3 500 MW, ce qui reflète une moindre
-utilisation de chauffage et une consommation globalement plus stable.
-
-Le printemps (en vert) et l'automne (en bleu) affichent des niveaux intermédiaires, mais la transition
-entre les saisons montre une tendance claire : la consommation augmente fortement à l'approche de
-l'hiver et diminue progressivement après cette période. Les hausses et baisses sont régulières et
-suivent les cycles naturels des variations climatiques.
-
-Ce visuel met en évidence la forte corrélation entre les saisons et la consommation énergétique. Il
-souligne l'importance de prévoir la demande énergétique en fonction des périodes de l'année afin
-d'optimiser les capacités de production et de répondre aux besoins de manière efficace."""
-    },
-    "8. Variations journalières de la consommation électrique en France": {
-        "category": "Consommation (Tendances & Saisons)", # Ancienne catégorie
-        "text": """Le graphique illustre la distribution horaire moyenne de la consommation d'électricité sur une journée
-typique. On observe une tendance claire, avec deux pics principaux de consommation : le premier en
-fin de matinée, entre 10 h et 13 h, et le second en début de soirée, autour de 19 h. Ces pics peuvent
-être attribués aux habitudes de la vie quotidienne, comme les activités matinales (chauffage,
-préparation des repas, travail) et les besoins accrus en soirée après le retour à domicile (éclairage,
-électroménagers, cuisine).
-
-La consommation est la plus basse durant les heures nocturnes, entre 1 h et 5 h du matin, reflétant
-une baisse de l'activité économique et domestique. À partir de 6 h, la demande commence à
-augmenter progressivement jusqu'à atteindre le pic de la fin de matinée.
-
-Ce visuel met en évidence les variations de la demande d'électricité en fonction des moments de la
-journée, soulignant l'importance d'ajuster la production énergétique pour répondre aux besoins
-spécifiques de ces périodes de forte consommation. Cette information est essentielle pour la gestion
-des réseaux électriques et l'optimisation des infrastructures énergétiques."""
-    },
-    "9. Proportion de la production d'électricité en France des énergies renouvelables et non-renouvelable": {
-        "category": "Production & Mix Énergétique", # Ancienne catégorie
+    "9. Part Production Électrique Renouvelable vs Non-Renouvelable": {
+        "image_number": 9,
+        "category": "🏭 Production & Mix Énergétique",
         "text": """Ce graphique compare la production moyenne d'électricité en France entre les sources renouvelables
 et non-renouvelables. Les sources non-renouvelables dominent largement, représentant 75,9 % de la
 production totale, tandis que les énergies renouvelables contribuent à hauteur de 24,1 %.
@@ -1196,8 +1230,9 @@ climatiques et réduire les émissions de gaz à effet de serre, il est crucial 
 énergies renouvelables dans le mix énergétique. Cela nécessitera des investissements importants
 dans les infrastructures renouvelables et des politiques favorisant leur développement à long terme."""
     },
-    "10. Contribution des énergies renouvelables par saison": {
-        "category": "Production & Mix Énergétique", # Ancienne catégorie
+    "10. Contribution Saisonnière des Énergies Renouvelables": {
+        "image_number": 10,
+        "category": "🏭 Production & Mix Énergétique",
         "text": """Le graphique en barres empilées montre la répartition moyenne des différentes sources d'énergie
 renouvelable (éolien, solaire, hydraulique et bioénergies) selon les saisons. On remarque que
 l'hydraulique (en vert) constitue la part la plus importante de la production d'énergie renouvelable tout
@@ -1216,27 +1251,9 @@ Ce visuel met en évidence la complémentarité des différentes sources d'éner
 fonction des saisons, soulignant l'importance de diversifier les sources de production pour assurer un
 approvisionnement énergétique stable tout au long de l'année."""
     },
-    "11. Répartition régionale de la consommation d'électricité": {
-        "category": "Analyses Régionales (Énergie & Population)", # Ancienne catégorie
-        "text": """La carte présente la consommation totale d'électricité par région en France, exprimée en mégawatts
-(MW). La distribution régionale met en évidence des disparités significatives entre les différentes
-régions. Les régions les plus peuplées et économiquement développées, telles que l'Île-de-France,
-Auvergne-Rhône-Alpes et les Hauts-de-France, affichent les plus hauts niveaux de consommation,
-représentés par les teintes les plus foncées sur la carte. Cela s'explique par une forte concentration
-de population, d'activités industrielles et de services nécessitant une importante consommation
-d'énergie.
-
-À l'inverse, des régions comme la Bretagne, la Normandie ou les Pays de la Loire affichent une
-consommation plus modérée, en raison de leur densité de population plus faible et d'une moindre
-concentration d'activités énergivores.
-
-Ce visuel met en évidence l'importance des facteurs démographiques et économiques dans la
-répartition de la consommation électrique à l'échelle régionale. Il souligne également la nécessité
-d'adapter les politiques énergétiques régionales pour répondre aux besoins spécifiques de chaque
-territoire, en prenant en compte les spécificités locales en matière de production et de consommation."""
-    },
-    "12. Production électrique : Disparités régionales": {
-        "category": "Analyses Régionales (Énergie & Population)", # Ancienne catégorie
+     "12. Carte Régionale de la Production Électrique Totale": { # Réaffecté
+        "image_number": 12,
+        "category": "🏭 Production & Mix Énergétique",
         "text": """Cette carte montre la production totale d'électricité par région en France, exprimée en mégawatts
 (MW). Les teintes de bleu indiquent les variations de production entre les régions, avec les régions
 les plus productrices représentées par les teintes les plus foncées. On constate que les régions du
@@ -1253,80 +1270,11 @@ l'importance stratégique de certaines régions dans l'approvisionnement électr
 également la nécessité d'adapter les infrastructures de production aux besoins spécifiques de chaque
 territoire pour assurer une meilleure gestion du réseau électrique."""
     },
-    "13. Croissance démographique régionale (1990-2024)": { # Note: Titre incohérent avec le texte qui parle de pop 2024 et pas de croissance
-        "category": "Analyses Régionales (Énergie & Population)", # Ancienne catégorie
-        "text": """Cette carte représente la population totale par région en France pour l'année 2024. Les teintes
-violettes indiquent les variations de densité de population, avec les régions les plus peuplées
-représentées par les couleurs les plus foncées. L'Île-de-France se distingue comme la région la plus
-densément peuplée, en raison de la présence de Paris et de sa région métropolitaine. Elle est suivie
-par les régions Auvergne-Rhône-Alpes, Provence-Alpes-Côte d'Azur et Occitanie, qui comptent
-également des métropoles importantes telles que Lyon, Marseille et Toulouse.
 
-Les régions moins peuplées, comme la Bretagne, la Bourgogne-Franche-Comté et la Normandie,
-apparaissent dans des teintes plus claires. Ces disparités démographiques influencent directement
-les besoins énergétiques de chaque région, les zones les plus densément peuplées étant
-susceptibles de consommer davantage d'électricité."""
-    },
-    "14. Croissance de la population totale en France (1990-2024)": {
-        "category": "Démographie Nationale", # Ancienne catégorie
-        "text": """Ce graphique montre l'évolution de la population totale en France, exprimée en millions d'habitants,
-entre 1990 et 2024. La courbe bleue représente la population totale au fil des années, tandis que la
-ligne rouge pointillée indique la tendance de croissance moyenne sur la période. La population a
-connu une augmentation régulière, passant d'environ 56 millions en 1990 à près de 66 millions en
-2024. Cette croissance équivaut à une augmentation annuelle moyenne de 0,3 million d'habitants,
-soit un taux de croissance d'environ 0,53 % par an.
-
-Le graphique met également en évidence des périodes de croissance légèrement plus rapide dans
-les années 1990 et au début des années 2000. La croissance semble cependant devenir plus
-modérée ces dernières années, ce qui pourrait s'expliquer par des facteurs tels que la diminution des
-taux de natalité ou les politiques migratoires.
-
-Ce visuel souligne la tendance démographique à long terme en France, qui a des implications
-importantes pour la planification des infrastructures et des services publics, y compris la
-consommation énergétique. La hausse constante de la population entraîne nécessairement une
-augmentation de la demande en énergie et en ressources, ce qui doit être pris en compte dans les
-politiques de gestion de l'énergie et de développement durable."""
-    },
-    "15. Répartition de la population par région en France au 31 décembre 2024": {
-        "category": "Analyses Régionales (Énergie & Population)", # Ancienne catégorie
-        "text": """Ce graphique en barres horizontales présente la population estimée par région en France au 31
-décembre 2024, exprimée en millions d'habitants. La région Île-de-France se distingue nettement
-avec plus de 12 millions d'habitants, confirmant son rôle de pôle démographique majeur. Viennent
-ensuite les régions Auvergne-Rhône-Alpes et Nouvelle-Aquitaine, qui comptent respectivement
-environ 8 et 6 millions d'habitants. Ces régions regroupent de grandes métropoles telles que Lyon,
-Bordeaux et Toulouse, contribuant ainsi à leur densité de population.
-
-À l'autre extrémité du spectre, la Corse est la région la moins peuplée avec environ 0,3 million
-d'habitants. Les régions telles que le Centre-Val de Loire, la Bourgogne-Franche-Comté, la
-Normandie et la Bretagne présentent des populations relativement stables et moins concentrées par
-rapport aux grandes régions métropolitaines.
-
-Ce visuel met en évidence les disparités régionales en termes de population, qui influencent
-directement les besoins en infrastructures, en services publics et en ressources énergétiques. Les
-régions les plus peuplées sont celles qui nécessitent le plus d'énergie pour alimenter les ménages,
-les industries et les services. Ces informations sont cruciaux pour adapter les politiques énergétiques
-aux besoins spécifiques de chaque région."""
-    },
-    "16. Croissance annuelle moyenne de la population par région (1990-2024)": {
-        "category": "Analyses Régionales (Énergie & Population)", # Ancienne catégorie
-        "text": """Ce graphique en barres horizontales montre la croissance annuelle moyenne de la population par
-région en France entre 1990 et 2024. L'Île-de-France enregistre la plus forte croissance moyenne,
-dépassant les 50 000 habitants par an, en raison de son attractivité économique et de son rôle de
-pôle central d'activités. Suivent les régions Occitanie, Auvergne-Rhône-Alpes et Nouvelle-Aquitaine,
-qui connaissent également une forte croissance démographique, attirant de nouveaux habitants
-grâce à leur qualité de vie et à leurs dynamiques économiques.
-
-Les régions ayant une croissance moyenne plus modérée incluent la Bourgogne-Franche-Comté, la
-Corse et la Normandie. Cela peut s'expliquer par des facteurs comme une moindre attractivité
-économique ou un vieillissement de la population.
-
-Ce visuel met en évidence les différences régionales en termes de croissance démographique, qui
-influencent directement la planification urbaine, les infrastructures et les politiques publiques. Les
-régions à forte croissance devront faire face à des défis en matière d'aménagement du territoire, de
-logement, et de gestion des ressources, notamment énergétiques."""
-    },
-    "17. Évolution de la température moyenne mensuelle en France (2016-2025)": {
-        "category": "Climat & Impact Énergie", # Ancienne catégorie
+    # --- Catégorie : ☀️ Climat & Météo : Impact Énergie ---
+    "17. Évolution Température Moyenne Mensuelle & Tendance (2016-2025)": {
+        "image_number": 17,
+        "category": "☀️ Climat & Météo : Impact Énergie",
         "text": """Le graphique présente l'évolution de la température moyenne mensuelle sur plusieurs années,
 accompagnée d'une tendance générale de régression linéaire représentée par la ligne rouge. La
 courbe bleue met en évidence les fluctuations saisonnières typiques de la température, avec des pics
@@ -1344,8 +1292,111 @@ Ce visuel souligne l'importance d'intégrer les prévisions climatiques dans la 
 saisonniers, avec une probable augmentation de la demande estivale en climatisation et une
 diminution des besoins hivernaux en chauffage."""
     },
-    "18. Carte des températures moyennes annuelles par région en France": {
-        "category": "Analyses Régionales (Énergie & Population)", # Ancienne catégorie
+    "20. Distribution des Températures Moyennes (Histogramme, France)": {
+        "image_number": 20,
+        "category": "☀️ Climat & Météo : Impact Énergie",
+        "text": """Le graphique représente la répartition des températures moyennes en France sous forme
+d'histogramme, accompagné d'une courbe de densité. La distribution des températures suit une
+forme en cloche, proche d'une distribution normale, avec une fréquence maximale autour de 10 à 15
+°C. Cela indique que la majorité des températures moyennes observées en France se situent dans
+cette fourchette.
+
+Les températures plus extrêmes, inférieures à 0 °C ou supérieures à 25 °C, sont beaucoup moins
+fréquentes, ce qui est cohérent avec le climat tempéré de la France. On observe une légère
+asymétrie vers la droite, ce qui suggère qu'il y a une proportion légèrement plus élevée de
+températures moyennes élevées par rapport aux températures basses.
+
+Ce visuel permet de mieux comprendre les conditions climatiques générales en France, en mettant
+en évidence que la majorité des températures moyennes sont modérées. Cela a des implications
+importantes pour les besoins énergétiques saisonniers, notamment en matière de chauffage en hiver
+et de climatisation en été, les périodes de températures extrêmes étant plus rares."""
+    },
+    "21. Évolution Température Moyenne Annuelle (Lissée, 2016-2024)": {
+        "image_number": 21,
+        "category": "☀️ Climat & Météo : Impact Énergie",
+        "text": """Le graphique montre l'évolution des températures moyennes annuelles en France sur une période
+allant de 2016 à 2024. La courbe rouge lissée met en évidence les fluctuations interannuelles des
+températures, tandis que les points noirs représentent les données réelles pour chaque année. On
+observe une tendance générale à la hausse des températures, bien que cette tendance soit marquée
+par des cycles de variation.
+
+Les années 2020 et 2021 montrent une légère baisse des températures moyennes, mais cette baisse
+est suivie d'une remontée notable à partir de 2022, culminant en 2024. Ces variations peuvent être
+liées à des événements climatiques spécifiques ou à des phénomènes météorologiques ponctuels.
+
+Ce visuel souligne l'importance de suivre les tendances climatiques à long terme pour mieux
+comprendre l'impact du changement climatique. Bien que les variations annuelles puissent masquer
+la tendance générale, l'augmentation des températures moyennes sur plusieurs années est un
+indicateur clair du réchauffement climatique, avec des implications sur les besoins énergétiques, les
+ressources naturelles et la gestion des infrastructures."""
+    },
+    "26. Relation Température Moyenne vs Consommation Électrique": {
+        "image_number": 26,
+        "category": "☀️ Climat & Météo : Impact Énergie",
+        "text": """Ce graphique de dispersion (scatter plot) illustre la relation entre la température moyenne (en °C) et
+la consommation d'électricité (en MW) en France. On observe une relation non linéaire
+caractéristique : la consommation d'électricité est plus élevée aux extrêmes de la courbe de
+température, c'est-à-dire lorsque les températures sont très basses (en dessous de 5 °C) ou très
+élevées (au-dessus de 20 °C). Cette relation traduit l'impact des besoins en chauffage et en
+climatisation sur la consommation énergétique.
+
+Lorsque les températures sont basses, la consommation d'électricité augmente de manière
+significative, principalement en raison de l'utilisation accrue des systèmes de chauffage électrique.
+Inversement, on observe également une augmentation de la consommation lorsque les températures
+sont élevées, ce qui correspond à une demande accrue en climatisation et en ventilation.
+
+La consommation d'électricité est plus modérée pour des températures comprises entre 10 °C et 20
+°C, correspondant à une plage où les besoins de chauffage et de climatisation sont réduits.
+
+Ce visuel met en lumière la forte dépendance de la consommation électrique aux conditions
+climatiques. Il souligne l'importance de prévoir la gestion de la demande énergétique en fonction des
+variations saisonnières de la température, notamment pour éviter des pics de consommation lors
+d'épisodes de froid extrême ou de vagues de chaleur."""
+    },
+    "27. Consommation Électrique Moyenne par Catégorie de Température": {
+        "image_number": 27,
+        "category": "☀️ Climat & Météo : Impact Énergie",
+        "text": """Ce graphique à barres présente la consommation électrique moyenne en fonction des catégories de
+température. Les différentes catégories sont classées de "Très froid" (< 0 °C) à "Très chaud" (> 30
+°C). On observe que la consommation électrique atteint son pic dans les conditions de "Très froid",
+avec une consommation moyenne dépassant les 300 000 MW. Cette forte demande est due à
+l'utilisation massive des systèmes de chauffage électrique pendant les périodes de températures très basses.
+
+À l'inverse, les catégories de température "Modéré" (10-20 °C) et "Chaud" (20-30 °C) affichent les
+consommations les plus faibles. Cela s'explique par le fait que dans cette plage de températures, les
+besoins en chauffage et en climatisation sont réduits.
+
+La consommation remonte légèrement dans la catégorie "Très chaud" (> 30 °C), en raison de
+l'augmentation de l'utilisation des systèmes de climatisation pendant les vagues de chaleur.
+
+Ce visuel met en évidence la corrélation entre les conditions climatiques extrêmes (froid ou chaud) et
+la consommation énergétique. Les périodes de températures extrêmes entraînent une forte demande
+en énergie, soulignant l'importance de prévoir des stratégies de gestion de la demande énergétique,
+notamment en renforçant l'efficacité énergétique des bâtiments pour le chauffage et la climatisation."""
+    },
+    "28. Impact Mensuel Température sur Consommation Électrique": {
+        "image_number": 28,
+        "category": "☀️ Climat & Météo : Impact Énergie",
+        "text": """Ce graphique combine une courbe de température moyenne mensuelle (en rouge) et des barres
+représentant la consommation électrique mensuelle (en bleu) en France. Il met en évidence la
+relation inverse entre la température moyenne et la consommation électrique. En hiver, lorsque les
+températures sont les plus basses (notamment en janvier et décembre), la consommation électrique
+atteint son pic, principalement en raison des besoins accrus de chauffage.
+
+À l'inverse, durant les mois les plus chauds (de juin à août), les températures atteignent leur pic, mais
+la consommation électrique diminue légèrement. Cependant, on remarque que la consommation ne
+baisse pas autant qu'on pourrait s'y attendre, ce qui peut être attribué à l'utilisation croissante des
+climatiseurs pendant les vagues de chaleur estivales.
+
+Ce visuel met en évidence l'importance des variations saisonnières sur la consommation électrique. Il
+souligne la nécessité de gérer les pics de demande énergétique en hiver, tout en anticipant une
+augmentation de la demande estivale liée au réchauffement climatique. Les politiques énergétiques
+doivent prendre en compte ces variations saisonnières pour assurer un approvisionnement stable tout
+au long de l'année."""
+    },
+    "18. Carte Température Moyenne Annuelle par Région": { # Réaffecté
+        "image_number": 18,
+        "category": "☀️ Climat & Météo : Impact Énergie",
         "text": """Cette carte montre la température moyenne annuelle par région en France. Les régions du nord et du
 centre du pays, comme les Hauts-de-France, la Normandie, le Grand Est, et l'Île-de-France,
 présentent les températures moyennes les plus basses, représentées par les teintes bleues. À
@@ -1362,8 +1413,9 @@ que les régions plus chaudes peuvent avoir une plus forte demande en climatisat
 estivaux. Ces disparités doivent être prises en compte dans la planification des infrastructures
 énergétiques pour adapter les ressources aux spécificités climatiques locales."""
     },
-    "19. Carte de chaleur des températures moyennes par région et mois en France": {
-        "category": "Analyses Régionales (Énergie & Population)", # Ancienne catégorie
+    "19. Carte Thermique Températures Mensuelles par Région": { # Réaffecté
+        "image_number": 19,
+        "category": "☀️ Climat & Météo : Impact Énergie",
         "text": """Cette carte de chaleur illustre les températures moyennes mensuelles par région en France,
 permettant de visualiser les variations saisonnières et géographiques tout au long de l'année. Les
 régions méridionales, comme la Corse et la Provence-Alpes-Côte d'Azur, se démarquent par des
@@ -1383,44 +1435,11 @@ affectent les besoins de chauffage en hiver et de climatisation en été. La car
 d'identifier les régions les plus susceptibles de faire face à des vagues de chaleur, notamment dans le
 sud du pays, ce qui peut avoir un impact sur la demande énergétique et les infrastructures."""
     },
-    "20. Répartition des températures moyennes en France : Histogramme et courbe de distribution": {
-        "category": "Climat & Impact Énergie", # Ancienne catégorie
-        "text": """Le graphique représente la répartition des températures moyennes en France sous forme
-d'histogramme, accompagné d'une courbe de densité. La distribution des températures suit une
-forme en cloche, proche d'une distribution normale, avec une fréquence maximale autour de 10 à 15
-°C. Cela indique que la majorité des températures moyennes observées en France se situent dans
-cette fourchette.
 
-Les températures plus extrêmes, inférieures à 0 °C ou supérieures à 25 °C, sont beaucoup moins
-fréquentes, ce qui est cohérent avec le climat tempéré de la France. On observe une légère
-asymétrie vers la droite, ce qui suggère qu'il y a une proportion légèrement plus élevée de
-températures moyennes élevées par rapport aux températures basses.
-
-Ce visuel permet de mieux comprendre les conditions climatiques générales en France, en mettant
-en évidence que la majorité des températures moyennes sont modérées. Cela a des implications
-importantes pour les besoins énergétiques saisonniers, notamment en matière de chauffage en hiver
-et de climatisation en été, les périodes de températures extrêmes étant plus rares."""
-    },
-    "21. Évolution des températures moyennes annuelles en France (2016-2024)": {
-        "category": "Climat & Impact Énergie", # Ancienne catégorie
-        "text": """Le graphique montre l'évolution des températures moyennes annuelles en France sur une période
-allant de 2016 à 2024. La courbe rouge lissée met en évidence les fluctuations interannuelles des
-températures, tandis que les points noirs représentent les données réelles pour chaque année. On
-observe une tendance générale à la hausse des températures, bien que cette tendance soit marquée
-par des cycles de variation.
-
-Les années 2020 et 2021 montrent une légère baisse des températures moyennes, mais cette baisse
-est suivie d'une remontée notable à partir de 2022, culminant en 2024. Ces variations peuvent être
-liées à des événements climatiques spécifiques ou à des phénomènes météorologiques ponctuels.
-
-Ce visuel souligne l'importance de suivre les tendances climatiques à long terme pour mieux
-comprendre l'impact du changement climatique. Bien que les variations annuelles puissent masquer
-la tendance générale, l'augmentation des températures moyennes sur plusieurs années est un
-indicateur clair du réchauffement climatique, avec des implications sur les besoins énergétiques, les
-ressources naturelles et la gestion des infrastructures."""
-    },
-    "22. Répartition de la consommation d'électricité par secteur d'activité économique": {
-        "category": "Consommation par Secteur", # Ancienne catégorie
+    # --- Catégorie : 🏢 Consommation par Secteur & Économie ---
+    "22. Répartition Consommation Électrique par Secteur d'Activité": {
+        "image_number": 22,
+        "category": "🏢 Consommation par Secteur & Économie",
         "text": """Ce graphique circulaire présente la répartition de la consommation d'électricité en France par secteur
 d'activité. La grande industrie domine largement la consommation avec 66 % du total, ce qui reflète le
 rôle important de l'industrie lourde et des processus industriels dans la demande énergétique
@@ -1442,52 +1461,9 @@ tertiaire consomme moins d'énergie, il joue un rôle important dans les villes 
 d'actions visant à promouvoir les énergies renouvelables et l'efficacité énergétique dans les bâtiments
 commerciaux et administratifs."""
     },
-    "23. Top 5 des régions avec le plus d'entreprises (2019)": {
-        "category": "Analyses Régionales (Énergie & Population)", # Ancienne catégorie -> Devrait être Économie/Secteur ? Mais focus Régional. Gardons Régional.
-        "text": """Ce graphique circulaire illustre la répartition des entreprises dans les cinq régions françaises
-comptant le plus grand nombre d'entreprises. L'Île-de-France domine largement avec 36,3 % du total
-des entreprises, soit plus d'un million d'entreprises, confirmant son rôle de moteur économique du
-pays. Cette concentration est due à la présence de Paris, capitale économique et financière, ainsi
-qu'à l'attractivité de la région pour les sièges sociaux et les start-ups.
-
-L'Auvergne-Rhône-Alpes se classe en deuxième position avec 19 % des entreprises, suivie de la
-Provence-Alpes-Côte d'Azur (16 %), de l'Occitanie (14,9 %) et de la Nouvelle-Aquitaine (13,7 %). Ces
-régions disposent d'importantes métropoles économiques comme Lyon, Marseille, Toulouse et
-Bordeaux, qui contribuent à la création et au développement d'entreprises.
-
-Ce visuel met en lumière l'inégalité dans la répartition des entreprises à travers le territoire français.
-Les régions les plus dynamiques économiquement concentrent une grande partie des activités
-entrepreneuriales, ce qui peut avoir un impact direct sur les besoins en infrastructures, en énergie et
-en services. Cette répartition reflète également les disparités économiques régionales, qui doivent
-être prises en compte dans les politiques de développement territorial et économique."""
-    },
-    "24. Consommation d'électricité par secteur d'activité économique et par région (2023)": {
-        "category": "Analyses Régionales (Énergie & Population)", # Ancienne catégorie -> Croise Régional et Secteur. Mettons dans Régional.
-        "text": """Ce graphique à barres empilées montre la consommation totale d'électricité par secteur d'activité et
-par région en France pour l'année 2023. La consommation est décomposée en trois principaux
-secteurs : la grande industrie (en bleu), le secteur tertiaire (en vert) et les autres secteurs (en orange).
-
-Les Hauts-de-France se distinguent comme la région ayant la plus forte consommation d'énergie,
-principalement due à la grande industrie, qui représente la majeure partie de la consommation dans
-cette région. Cela peut être expliqué par la présence d'industries lourdes, telles que les industries
-métallurgiques et chimiques. L'Auvergne-Rhône-Alpes et la Provence-Alpes-Côte d'Azur suivent
-également avec une consommation industrielle élevée, tout en ayant une contribution notable du
-secteur tertiaire.
-
-En revanche, l'Île-de-France, bien que très peuplée, présente une répartition différente de sa
-consommation énergétique. La consommation dans cette région est dominée par le secteur tertiaire,
-en raison de la forte concentration d'entreprises de services, de bureaux et d'activités économiques
-non industrielles.
-
-Ce visuel met en évidence les disparités régionales dans la consommation énergétique selon les
-secteurs d'activité. Les régions à forte industrialisation consomment davantage d'énergie dans le
-secteur industriel, tandis que les régions axées sur les services, comme l'Île-de-France, voient une
-plus grande part de leur consommation énergétique provenir du secteur tertiaire. Cette répartition doit
-être prise en compte pour adapter les politiques énergétiques aux besoins spécifiques de chaque
-région et secteur."""
-    },
-    "25. Evolution de la consommation électrique par secteur d'activité économique sur une journée": {
-        "category": "Consommation par Secteur", # Ancienne catégorie
+    "25. Profil Journalier Consommation Électrique par Secteur d'Activité": {
+        "image_number": 25,
+        "category": "🏢 Consommation par Secteur & Économie",
         "text": """Le graphique montre l'évolution de la consommation moyenne d'électricité par secteur d'activité au
 cours d'une journée typique. Trois secteurs sont représentés : la grande industrie (en orange), le
 secteur tertiaire (en vert) et les autres secteurs (en bleu).
@@ -1511,185 +1487,161 @@ consommation du secteur tertiaire est plus liée aux horaires de travail. Cette 
 pour optimiser la gestion de l'approvisionnement en électricité, notamment en ajustant la production
 aux périodes de forte demande."""
     },
-    "26. Relation entre la température moyenne et la consommation d'électricité en France": {
-        "category": "Climat & Impact Énergie", # Ancienne catégorie
-        "text": """Ce graphique de dispersion (scatter plot) illustre la relation entre la température moyenne (en °C) et
-la consommation d'électricité (en MW) en France. On observe une relation non linéaire
-caractéristique : la consommation d'électricité est plus élevée aux extrêmes de la courbe de
-température, c'est-à-dire lorsque les températures sont très basses (en dessous de 5 °C) ou très
-élevées (au-dessus de 20 °C). Cette relation traduit l'impact des besoins en chauffage et en
-climatisation sur la consommation énergétique.
+    "23. Top 5 Régions par Nombre d'Entreprises (2019)": { # Réaffecté
+        "image_number": 23,
+        "category": "🏢 Consommation par Secteur & Économie",
+        "text": """Ce graphique circulaire illustre la répartition des entreprises dans les cinq régions françaises
+comptant le plus grand nombre d'entreprises. L'Île-de-France domine largement avec 36,3 % du total
+des entreprises, soit plus d'un million d'entreprises, confirmant son rôle de moteur économique du
+pays. Cette concentration est due à la présence de Paris, capitale économique et financière, ainsi
+qu'à l'attractivité de la région pour les sièges sociaux et les start-ups.
 
-Lorsque les températures sont basses, la consommation d'électricité augmente de manière
-significative, principalement en raison de l'utilisation accrue des systèmes de chauffage électrique.
-Inversement, on observe également une augmentation de la consommation lorsque les températures
-sont élevées, ce qui correspond à une demande accrue en climatisation et en ventilation.
+L'Auvergne-Rhône-Alpes se classe en deuxième position avec 19 % des entreprises, suivie de la
+Provence-Alpes-Côte d'Azur (16 %), de l'Occitanie (14,9 %) et de la Nouvelle-Aquitaine (13,7 %). Ces
+régions disposent d'importantes métropoles économiques comme Lyon, Marseille, Toulouse et
+Bordeaux, qui contribuent à la création et au développement d'entreprises.
 
-La consommation d'électricité est plus modérée pour des températures comprises entre 10 °C et 20
-°C, correspondant à une plage où les besoins de chauffage et de climatisation sont réduits.
-
-Ce visuel met en lumière la forte dépendance de la consommation électrique aux conditions
-climatiques. Il souligne l'importance de prévoir la gestion de la demande énergétique en fonction des
-variations saisonnières de la température, notamment pour éviter des pics de consommation lors
-d'épisodes de froid extrême ou de vagues de chaleur."""
+Ce visuel met en lumière l'inégalité dans la répartition des entreprises à travers le territoire français.
+Les régions les plus dynamiques économiquement concentrent une grande partie des activités
+entrepreneuriales, ce qui peut avoir un impact direct sur les besoins en infrastructures, en énergie et
+en services. Cette répartition reflète également les disparités économiques régionales, qui doivent
+être prises en compte dans les politiques de développement territorial et économique."""
     },
-    "27. Consommation électrique moyenne par catégorie de température": {
-        "category": "Climat & Impact Énergie", # Ancienne catégorie
-        "text": """Ce graphique à barres présente la consommation électrique moyenne en fonction des catégories de
-température. Les différentes catégories sont classées de "Très froid" (< 0 °C) à "Très chaud" (> 30
-°C). On observe que la consommation électrique atteint son pic dans les conditions de "Très froid",
-avec une consommation moyenne dépassant les 300 000 MW. Cette forte demande est due à
-l'utilisation massive des systèmes de chauffage électrique pendant les périodes de températures très basses.
+    "24. Consommation Électrique par Secteur et par Région (2023)": { # Réaffecté
+        "image_number": 24,
+        "category": "🏢 Consommation par Secteur & Économie",
+        "text": """Ce graphique à barres empilées montre la consommation totale d'électricité par secteur d'activité et
+par région en France pour l'année 2023. La consommation est décomposée en trois principaux
+secteurs : la grande industrie (en bleu), le secteur tertiaire (en vert) et les autres secteurs (en orange).
 
-À l'inverse, les catégories de température "Modéré" (10-20 °C) et "Chaud" (20-30 °C) affichent les
-consommations les plus faibles. Cela s'explique par le fait que dans cette plage de températures, les
-besoins en chauffage et en climatisation sont réduits.
+Les Hauts-de-France se distinguent comme la région ayant la plus forte consommation d'énergie,
+principalement due à la grande industrie, qui représente la majeure partie de la consommation dans
+cette région. Cela peut être expliqué par la présence d'industries lourdes, telles que les industries
+métallurgiques et chimiques. L'Auvergne-Rhône-Alpes et la Provence-Alpes-Côte d'Azur suivent
+également avec une consommation industrielle élevée, tout en ayant une contribution notable du
+secteur tertiaire.
 
-La consommation remonte légèrement dans la catégorie "Très chaud" (> 30 °C), en raison de
-l'augmentation de l'utilisation des systèmes de climatisation pendant les vagues de chaleur.
+En revanche, l'Île-de-France, bien que très peuplée, présente une répartition différente de sa
+consommation énergétique. La consommation dans cette région est dominée par le secteur tertiaire,
+en raison de la forte concentration d'entreprises de services, de bureaux et d'activités économiques
+non industrielles.
 
-Ce visuel met en évidence la corrélation entre les conditions climatiques extrêmes (froid ou chaud) et
-la consommation énergétique. Les périodes de températures extrêmes entraînent une forte demande
-en énergie, soulignant l'importance de prévoir des stratégies de gestion de la demande énergétique,
-notamment en renforçant l'efficacité énergétique des bâtiments pour le chauffage et la climatisation."""
+Ce visuel met en évidence les disparités régionales dans la consommation énergétique selon les
+secteurs d'activité. Les régions à forte industrialisation consomment davantage d'énergie dans le
+secteur industriel, tandis que les régions axées sur les services, comme l'Île-de-France, voient une
+plus grande part de leur consommation énergétique provenir du secteur tertiaire. Cette répartition doit
+être prise en compte pour adapter les politiques énergétiques aux besoins spécifiques de chaque
+région et secteur."""
     },
-    "28. Impact des variations de température sur la consommation électrique": {
-        "category": "Climat & Impact Énergie", # Ancienne catégorie
-        "text": """Ce graphique combine une courbe de température moyenne mensuelle (en rouge) et des barres
-représentant la consommation électrique mensuelle (en bleu) en France. Il met en évidence la
-relation inverse entre la température moyenne et la consommation électrique. En hiver, lorsque les
-températures sont les plus basses (notamment en janvier et décembre), la consommation électrique
-atteint son pic, principalement en raison des besoins accrus de chauffage.
 
-À l'inverse, durant les mois les plus chauds (de juin à août), les températures atteignent leur pic, mais
-la consommation électrique diminue légèrement. Cependant, on remarque que la consommation ne
-baisse pas autant qu'on pourrait s'y attendre, ce qui peut être attribué à l'utilisation croissante des
-climatiseurs pendant les vagues de chaleur estivales.
+    # --- Catégorie : 👨‍👩‍👧‍👦 Démographie ---
+    "14. Évolution Population Totale France (1990-2024)": {
+        "image_number": 14,
+        "category": "👨‍👩‍👧‍👦 Démographie",
+        "text": """Ce graphique montre l'évolution de la population totale en France, exprimée en millions d'habitants,
+entre 1990 et 2024. La courbe bleue représente la population totale au fil des années, tandis que la
+ligne rouge pointillée indique la tendance de croissance moyenne sur la période. La population a
+connu une augmentation régulière, passant d'environ 56 millions en 1990 à près de 66 millions en
+2024. Cette croissance équivaut à une augmentation annuelle moyenne de 0,3 million d'habitants,
+soit un taux de croissance d'environ 0,53 % par an.
 
-Ce visuel met en évidence l'importance des variations saisonnières sur la consommation électrique. Il
-souligne la nécessité de gérer les pics de demande énergétique en hiver, tout en anticipant une
-augmentation de la demande estivale liée au réchauffement climatique. Les politiques énergétiques
-doivent prendre en compte ces variations saisonnières pour assurer un approvisionnement stable tout
-au long de l'année."""
-    }
+Le graphique met également en évidence des périodes de croissance légèrement plus rapide dans
+les années 1990 et au début des années 2000. La croissance semble cependant devenir plus
+modérée ces dernières années, ce qui pourrait s'expliquer par des facteurs tels que la diminution des
+taux de natalité ou les politiques migratoires.
+
+Ce visuel souligne la tendance démographique à long terme en France, qui a des implications
+importantes pour la planification des infrastructures et des services publics, y compris la
+consommation énergétique. La hausse constante de la population entraîne nécessairement une
+augmentation de la demande en énergie et en ressources, ce qui doit être pris en compte dans les
+politiques de gestion de l'énergie et de développement durable."""
+    },
+    "13. Carte Population Totale par Région (2024)": { # Réaffecté (Titre original incohérent avec image)
+        "image_number": 13,
+        "category": "👨‍👩‍👧‍👦 Démographie",
+        "text": """Cette carte représente la population totale par région en France pour l'année 2024. Les teintes
+violettes indiquent les variations de densité de population, avec les régions les plus peuplées
+représentées par les couleurs les plus foncées. L'Île-de-France se distingue comme la région la plus
+densément peuplée, en raison de la présence de Paris et de sa région métropolitaine. Elle est suivie
+par les régions Auvergne-Rhône-Alpes, Provence-Alpes-Côte d'Azur et Occitanie, qui comptent
+également des métropoles importantes telles que Lyon, Marseille et Toulouse.
+
+Les régions moins peuplées, comme la Bretagne, la Bourgogne-Franche-Comté et la Normandie,
+apparaissent dans des teintes plus claires. Ces disparités démographiques influencent directement
+les besoins énergétiques de chaque région, les zones les plus densément peuplées étant
+susceptibles de consommer davantage d'électricité."""
+    },
+    "15. Répartition Population par Région (Estim. Fin 2024)": { # Réaffecté
+        "image_number": 15,
+        "category": "👨‍👩‍👧‍👦 Démographie",
+        "text": """Ce graphique en barres horizontales présente la population estimée par région en France au 31
+décembre 2024, exprimée en millions d'habitants. La région Île-de-France se distingue nettement
+avec plus de 12 millions d'habitants, confirmant son rôle de pôle démographique majeur. Viennent
+ensuite les régions Auvergne-Rhône-Alpes et Nouvelle-Aquitaine, qui comptent respectivement
+environ 8 et 6 millions d'habitants. Ces régions regroupent de grandes métropoles telles que Lyon,
+Bordeaux et Toulouse, contribuant ainsi à leur densité de population.
+
+À l'autre extrémité du spectre, la Corse est la région la moins peuplée avec environ 0,3 million
+d'habitants. Les régions telles que le Centre-Val de Loire, la Bourgogne-Franche-Comté, la
+Normandie et la Bretagne présentent des populations relativement stables et moins concentrées par
+rapport aux grandes régions métropolitaines.
+
+Ce visuel met en évidence les disparités régionales en termes de population, qui influencent
+directement les besoins en infrastructures, en services publics et en ressources énergétiques. Les
+régions les plus peuplées sont celles qui nécessitent le plus d'énergie pour alimenter les ménages,
+les industries et les services. Ces informations sont cruciaux pour adapter les politiques énergétiques
+aux besoins spécifiques de chaque région."""
+    },
+    "16. Croissance Démographique Annuelle Moyenne par Région (1990-2024)": { # Réaffecté
+        "image_number": 16,
+        "category": "👨‍👩‍👧‍👦 Démographie",
+        "text": """Ce graphique en barres horizontales montre la croissance annuelle moyenne de la population par
+région en France entre 1990 et 2024. L'Île-de-France enregistre la plus forte croissance moyenne,
+dépassant les 50 000 habitants par an, en raison de son attractivité économique et de son rôle de
+pôle central d'activités. Suivent les régions Occitanie, Auvergne-Rhône-Alpes et Nouvelle-Aquitaine,
+qui connaissent également une forte croissance démographique, attirant de nouveaux habitants
+grâce à leur qualité de vie et à leurs dynamiques économiques.
+
+Les régions ayant une croissance moyenne plus modérée incluent la Bourgogne-Franche-Comté, la
+Corse et la Normandie. Cela peut s'expliquer par des facteurs comme une moindre attractivité
+économique ou un vieillissement de la population.
+
+Ce visuel met en évidence les différences régionales en termes de croissance démographique, qui
+influencent directement la planification urbaine, les infrastructures et les politiques publiques. Les
+régions à forte croissance devront faire face à des défis en matière d'aménagement du territoire, de
+logement, et de gestion des ressources, notamment énergétiques."""
+    },
 }
 
-# --- /!\ MODIFICATION : Suppression de "Analyses Régionales" ---
-# --- Nouvelles Catégories Ordonnées (SANS Analyses Régionales) ---
+
+# --- Définir les catégories et leur ordre ---
+# Assurez-vous que ces noms correspondent exactement aux valeurs 'category' dans le dictionnaire
 NEW_CATEGORIES_ORDERED = [
     "📈 Consommation : Tendances & Rythmes",
     "🏭 Production & Mix Énergétique",
-    # "🗺️ Analyses Régionales", # <-- SUPPRIMÉ
     "☀️ Climat & Météo : Impact Énergie",
     "🏢 Consommation par Secteur & Économie",
     "👨‍👩‍👧‍👦 Démographie"
 ]
 
-# --- Mapping des anciennes catégories vers les nouvelles (pour la logique de regroupement) ---
-# Note: 'Analyses Régionales (Énergie & Population)' n'a plus de destination directe.
-# Sa logique sera gérée au cas par cas dans la boucle de regroupement ci-dessous.
-OLD_TO_NEW_CATEGORY_MAP = {
-    "Consommation (Tendances & Saisons)": "📈 Consommation : Tendances & Rythmes",
-    "Production & Mix Énergétique": "🏭 Production & Mix Énergétique",
-    "Analyses Régionales (Énergie & Population)": None, # Sera traité spécifiquement
-    "Démographie Nationale": "👨‍👩‍👧‍👦 Démographie",
-    "Climat & Impact Énergie": "☀️ Climat & Météo : Impact Énergie",
-    "Consommation par Secteur": "🏢 Consommation par Secteur & Économie"
-}
-
-# --- Regrouper les visualisations par NOUVELLE catégorie ---
-visualizations_by_new_category = {cat: [] for cat in NEW_CATEGORIES_ORDERED}
-for original_key, details in visualizations_data.items():
-    old_category = details["category"]
-    new_category = None # Réinitialiser pour chaque visualisation
-
-    # /!\ MODIFICATION : Logique de réaffectation des visualisations de l'ancienne catégorie "Analyses Régionales" ---
-    if old_category == "Analyses Régionales (Énergie & Population)":
-        # Réaffectation basée sur le contenu de la visualisation (clé originale)
-        if original_key in ["3. Répartition régionale de la consommation totale d'énergie en France (2013 à 2023)",
-                           "11. Répartition régionale de la consommation d'électricité"]:
-             new_category = "📈 Consommation : Tendances & Rythmes"
-        elif original_key in ["12. Production électrique : Disparités régionales"]:
-             new_category = "🏭 Production & Mix Énergétique"
-        elif original_key in ["13. Croissance démographique régionale (1990-2024)", # Pop 2024 map
-                           "15. Répartition de la population par région en France au 31 décembre 2024",
-                           "16. Croissance annuelle moyenne de la population par région (1990-2024)"]:
-             new_category = "👨‍👩‍👧‍👦 Démographie"
-        elif original_key in ["18. Carte des températures moyennes annuelles par région en France",
-                           "19. Carte de chaleur des températures moyennes par région et mois en France"]:
-             new_category = "☀️ Climat & Météo : Impact Énergie"
-        elif original_key in ["23. Top 5 des régions avec le plus d'entreprises (2019)",
-                           "24. Consommation d'électricité par secteur d'activité économique et par région (2023)"]:
-             new_category = "🏢 Consommation par Secteur & Économie"
-        else:
-            # Fallback au cas où une visualisation de cette catégorie n'est pas listée ci-dessus
-             print(f"Avertissement: Visualisation '{original_key}' de catégorie 'Analyses Régionales (Énergie & Population)' non explicitement réaffectée. Placement dans la première catégorie.")
-             new_category = NEW_CATEGORIES_ORDERED[0] # Ou une autre catégorie par défaut
-    else:
-        # Pour les autres catégories, utiliser le mapping standard
-        new_category = OLD_TO_NEW_CATEGORY_MAP.get(old_category)
-
-    # Cas particulier: la 14 est Démographie Nationale
-    if original_key == "14. Croissance de la population totale en France (1990-2024)":
-        new_category = "👨‍👩‍👧‍👦 Démographie"
-
-
-    if new_category and new_category in visualizations_by_new_category:
-        visualizations_by_new_category[new_category].append(original_key)
-    else:
-        print(f"Avertissement: Impossible de mapper la visualisation '{original_key}' (ancienne cat: '{old_category}') vers une nouvelle catégorie valide ou catégorie non trouvée: '{new_category}'.")
-        # Optionnel: Mettre dans une catégorie "Autre" ou la première par défaut si elle existe encore
-        if NEW_CATEGORIES_ORDERED:
-            visualizations_by_new_category[NEW_CATEGORIES_ORDERED[0]].append(original_key)
-
-
-# Trier les visualisations dans chaque catégorie par leur numéro
-for cat in visualizations_by_new_category:
-    visualizations_by_new_category[cat].sort(key=lambda x: int(x.split('.')[0]))
-
-# --- Fonction pour créer des titres d'affichage plus courts ---
-def create_display_title(original_key):
-    try:
-        # Enlever le numéro et le point, garder le reste
-        title_part = original_key.split('.', 1)[1].strip()
-        # Raccourcissements simples (peut être amélioré)
-        replacements = {
-            "consommation d'énergie": "Conso. Énergie",
-            "consommation d'électricité": "Conso. Élec.",
-            "production d'électricité": "Prod. Élec.",
-            "production d'énergie": "Prod. Énergie",
-            "répartition régionale": "Répart. Régionale",
-            "évolution temporelle": "Évol. Temporelle",
-            "températures moyennes": "Temp. Moyennes",
-            "secteur d'activité économique": "Secteur Éco.",
-            "énergies renouvelables": "EnR",
-            "France": "FR",
-            "par région": "/ Région",
-            "par saison": "/ Saison",
-            "par mois": "/ Mois",
-            "sur une journée": "/ Jour",
-            "au niveau national": "(National)",
-            "annuelles": "annuelles", # Garder ou raccourcir ?
-            "mensuelle": "mensuelle"
-        }
-        for old, new in replacements.items():
-            title_part = title_part.replace(old, new)
-
-        # Limiter la longueur si nécessaire
-        max_len = 70 # Ajuster si besoin
-        if len(title_part) > max_len:
-            title_part = title_part[:max_len-3] + "..."
-        return title_part
-    except Exception: # Fallback en cas d'erreur de split ou autre
-        return original_key # Retourne la clé originale si le formatage échoue
-
-# --- Créer un mapping Titre Affichage -> Clé Originale pour chaque catégorie ---
+# --- Préparer les données pour les menus déroulants ---
+# Crée un dictionnaire où chaque clé est une catégorie et la valeur est
+# un autre dictionnaire mappant le titre d'affichage (clé du dict principal) à lui-même.
 display_title_map_by_category = {}
-for category, original_keys in visualizations_by_new_category.items():
+for category_name in NEW_CATEGORIES_ORDERED:
+    # Trouve toutes les clés (titres) appartenant à cette catégorie
+    category_keys = [key for key, details in visualizations_data.items() if details.get("category") == category_name]
+
+    # Trie ces clés en utilisant le 'image_number' pour un ordre cohérent
+    category_keys.sort(key=lambda k: visualizations_data[k].get("image_number", 0))
+
+    # Crée le dictionnaire pour le menu déroulant de cette catégorie
     display_map = {"--- Choisir une visualisation ---": None} # Option par défaut
-    for key in original_keys:
-        display_map[create_display_title(key)] = key
-    display_title_map_by_category[category] = display_map
+    for key in category_keys:
+        display_map[key] = key # La clé est le titre à afficher et la valeur de référence
+
+    display_title_map_by_category[category_name] = display_map
+
 
 
 # =============================================================================
@@ -2326,24 +2278,23 @@ elif current_choice == "📊 Data Visualisation":
     st.write("Explorez les différentes visualisations organisées par thème.")
     st.markdown("---")
 
-    # /!\ MODIFICATION : Utilise la liste NEW_CATEGORIES_ORDERED mise à jour (sans Analyses Régionales)
     # Créer les onglets pour les nouvelles catégories
     tabs = st.tabs(NEW_CATEGORIES_ORDERED)
 
     # Parcourir chaque catégorie (onglet) et afficher le contenu correspondant
     for i, category_name in enumerate(NEW_CATEGORIES_ORDERED):
         with tabs[i]:
-            st.subheader(f"Visualisations : {category_name}")
+            # La ligne st.subheader a été supprimée ici
 
             # Récupérer le mapping titre affichage -> clé originale pour cette catégorie
-            # Ce mapping a été mis à jour par la logique de regroupement précédente
             current_display_map = display_title_map_by_category.get(category_name, {})
             display_titles_options = list(current_display_map.keys())
 
             if len(display_titles_options) > 1: # Vérifier s'il y a des visualisations (plus que juste "--- Choisir ---")
                 # Menu déroulant pour sélectionner une visualisation dans cet onglet
                 selected_display_title = st.selectbox(
-                    f"Choisissez une visualisation pour '{category_name}':",
+                    # MODIFICATION: Texte du label plus concis, car le nom de catégorie est déjà dans l'onglet
+                    f"Choisir une visualisation :",
                     options=display_titles_options,
                     key=f"visu_select_{i}", # Clé unique pour chaque selectbox
                     index=0 # Sélectionner "--- Choisir ---" par défaut
@@ -2355,27 +2306,41 @@ elif current_choice == "📊 Data Visualisation":
                 # --- Affichage de l'image et du texte si une visualisation est choisie ---
                 if original_key:
                     try:
-                        visu_number = original_key.split('.')[0]
-                        image_filename = f"{visu_number}.png"
-                        # Adapter le chemin si vos images sont ailleurs
-                        image_path = os.path.join('Visualisation', image_filename)
+                        # --- NOUVELLE LOGIQUE POUR RÉCUPÉRER LES DÉTAILS ---
+                        visu_details = visualizations_data.get(original_key)
+                        if visu_details:
+                             visu_number = visu_details.get("image_number")
+                             description = visu_details.get("text", "Description non disponible.")
 
-                        st.markdown("---") # Séparateur avant la visualisation
+                             if visu_number:
+                                image_filename = f"{visu_number}.png"
+                                image_path = os.path.join('Visualisation', image_filename)
 
-                        # Colonnes pour l'image et le texte (optionnel, pour la mise en page)
-                        col1, col2 = st.columns([1, 1]) # Version (Image 1/2, Texte 1/2)
+                                st.markdown("---") # Séparateur avant la visualisation
 
-                        with col1:
-                            if os.path.exists(image_path):
-                                st.image(image_path, caption=f"Visualisation : {original_key}")
-                            else:
-                                st.warning(f"Image non trouvée : {image_path}")
-                                st.info(f"Assurez-vous que l'image '{image_filename}' existe dans le dossier 'Visualisation'.")
+                                # Colonnes pour l'image et le texte
+                                col1, col2 = st.columns([1, 1])
 
-                        with col2:
-                            description = visualizations_data[original_key]["text"]
-                            st.markdown(f"#### Analyse")
-                            st.write(description) # Le texte s'étalera maintenant dans une colonne plus large
+                                with col1:
+                                    if os.path.exists(image_path):
+                                        # Utiliser original_key (le titre complet) pour la légende
+                                        st.image(image_path, caption=f"Visualisation : {original_key}")
+                                    else:
+                                        st.warning(f"Image non trouvée : {image_path}")
+                                        st.info(f"Assurez-vous que l'image '{image_filename}' existe dans le dossier 'Visualisation'.")
+
+                                with col2:
+                                    st.markdown(f"#### Analyse")
+                                    st.write(description)
+                             else:
+                                 st.error(f"Erreur interne : Numéro d'image manquant pour '{original_key}'.")
+                                 # Afficher au moins la description si l'image manque
+                                 st.markdown("---")
+                                 st.markdown(f"#### Analyse")
+                                 st.write(description)
+                        else:
+                            st.error(f"Erreur interne: Détails introuvables pour la clé '{original_key}'.")
+                        # --- FIN NOUVELLE LOGIQUE ---
 
                     except Exception as e:
                         st.error(f"Erreur lors de l'affichage de la visualisation '{original_key}': {e}")
@@ -2383,7 +2348,9 @@ elif current_choice == "📊 Data Visualisation":
                              st.error(f"Chemin de l'image tenté : {image_path}")
 
                 elif selected_display_title != "--- Choisir une visualisation ---":
-                    st.warning("Erreur : impossible de trouver la clé originale pour le titre sélectionné.")
+                     # Cette condition ne devrait plus être nécessaire avec la nouvelle structure
+                     # st.warning("Erreur : impossible de trouver la clé originale pour le titre sélectionné.")
+                     pass # Ne rien faire si "--- Choisir ---" est sélectionné
 
             else:
                 st.info(f"Aucune visualisation disponible pour la catégorie '{category_name}' pour le moment.")
