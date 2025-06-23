@@ -1,7 +1,12 @@
-streamlit
-pandas
-Pillow
-numpy
-joblib
-gdown
-scikit-learn
+# requirements.txt - Option B (Compatibilité)
+# Pour corriger l'erreur SANS ré-entrainer le modèle.
+
+streamlit==1.30.0
+pandas==2.1.4
+Pillow==10.1.0
+numpy==1.26.2
+joblib==1.3.2
+gdown==4.7.1
+# MODIFIÉ : Mettre à jour scikit-learn vers une version plus récente et compatible.
+# La version 1.3.2 est un excellent choix, stable et compatible avec joblib 1.3.2.
+scikit-learn==1.3.2
